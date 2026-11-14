@@ -232,6 +232,144 @@ footer{background:#fffaf5!important;padding:28px 18px!important;line-height:1.9!
 .contact-hint{font-size:9px!important;color:#81776d!important;line-height:1.5!important;margin:8px 0 0!important}
 @media(max-width:390px){.contact-options{grid-template-columns:repeat(2,minmax(0,1fr))}}
 
+
+/* ===== Three balanced service tiles + refined dropdown typography ===== */
+.service-grid{
+ display:grid!important;
+ grid-template-columns:repeat(3,minmax(0,1fr))!important;
+ align-items:stretch!important;
+ gap:20px!important;
+}
+.service-card{
+ min-width:0!important;
+ min-height:365px!important;
+ display:flex!important;
+ flex-direction:column!important;
+ justify-content:flex-start!important;
+}
+.service-card .selection-row{margin-top:auto!important}
+.service-card select,
+.service-card select option{
+ font-family:"DM Sans",Arial,sans-serif!important;
+ font-size:13px!important;
+ font-weight:600!important;
+ letter-spacing:0!important;
+ color:#332e28!important;
+}
+.service-card select{
+ width:100%!important;
+ line-height:1.35!important;
+ appearance:auto;
+}
+.other-card{
+ background:linear-gradient(150deg,#fff 0%,#fff7ef 100%)!important;
+}
+.other-card .service-icon{
+ display:flex!important;
+ align-items:center!important;
+ justify-content:center!important;
+ font-size:25px!important;
+}
+.other-card .contact{
+ display:inline-flex!important;
+ align-items:center!important;
+ justify-content:center!important;
+ width:100%!important;
+ margin-top:auto!important;
+ min-height:48px!important;
+ text-decoration:none!important;
+ font-weight:800!important;
+ font-size:11px!important;
+}
+@media(min-width:1050px){
+ .service-card{min-height:370px!important}
+}
+@media(max-width:900px){
+ .service-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ .other-card{grid-column:1/-1!important;min-height:260px!important}
+}
+@media(max-width:600px){
+ .service-grid{grid-template-columns:1fr!important;gap:14px!important}
+ .service-card{min-height:0!important;padding:23px!important}
+ .other-card{grid-column:auto!important;min-height:245px!important}
+ .service-card .selection-row{margin-top:18px!important}
+ .other-card .contact{margin-top:20px!important}
+}
+
+
+
+/* ===== Sophisticated branded header refresh ===== */
+.site-header{
+ height:132px!important;
+ padding:12px 24px!important;
+ background:
+   radial-gradient(ellipse at 50% 0%,rgba(255,239,222,.78),transparent 48%),
+   linear-gradient(180deg,#fffdfa 0%,#fff 100%)!important;
+ border-bottom:1px solid #eadfd3!important;
+ box-shadow:0 8px 28px rgba(54,39,23,.065)!important;
+ isolation:isolate;
+}
+.site-header:before{
+ content:"";
+ position:absolute;left:0;right:0;top:0;height:3px;
+ background:linear-gradient(90deg,#d65e13 0%,#f7a45d 28%,#f7c99f 50%,#f7a45d 72%,#d65e13 100%);
+}
+.site-header:after{
+ content:"LOCAL PROPERTY MAINTENANCE";
+ position:absolute;left:max(28px,calc((100% - 1120px)/2));
+ top:50%;transform:translateY(-50%);
+ color:#9a8b7b;font-size:9px;font-weight:800;letter-spacing:1.65px;
+}
+.brand-centred{
+ width:min(390px,calc(100% - 230px))!important;
+ height:116px!important;
+ padding:7px 28px!important;
+ border-radius:24px;
+ background:radial-gradient(ellipse at center,rgba(255,241,226,.82),rgba(255,250,245,.26) 68%,transparent 74%);
+ filter:drop-shadow(0 5px 10px rgba(70,43,18,.06));
+}
+.brand-centred img{
+ transform:scale(1.04);
+ transition:transform .28s ease,filter .28s ease;
+ filter:drop-shadow(0 4px 5px rgba(49,33,19,.10));
+}
+.brand-centred:hover img{transform:scale(1.075)}
+.site-header .basket-top{
+ right:max(28px,calc((100% - 1120px)/2))!important;
+ top:50%!important;
+ transform:translateY(-50%)!important;
+ min-height:47px;
+ padding:10px 15px 10px 17px!important;
+ border:1px solid #39332c!important;
+ border-radius:13px!important;
+ background:linear-gradient(145deg,#34302b,#211f1c)!important;
+ box-shadow:0 8px 20px rgba(35,29,23,.17),inset 0 1px rgba(255,255,255,.12)!important;
+ letter-spacing:.15px;
+ transition:transform .2s ease,box-shadow .2s ease,background .2s ease;
+}
+.site-header .basket-top:hover{
+ transform:translateY(calc(-50% - 2px))!important;
+ box-shadow:0 12px 25px rgba(35,29,23,.22)!important;
+ background:linear-gradient(145deg,#413a32,#26221e)!important;
+}
+.site-header .basket-count{
+ background:linear-gradient(145deg,#ff9a4d,#e96b13)!important;
+ box-shadow:0 2px 6px rgba(0,0,0,.18);
+}
+@media(max-width:760px){
+ .site-header{height:116px!important;padding:8px 12px!important}
+ .site-header:after{content:"FOX FIX & FINISH";left:14px;top:auto;bottom:8px;transform:none;font-size:7px;letter-spacing:1.15px}
+ .brand-centred{width:min(300px,calc(100% - 105px))!important;height:104px!important;padding:5px 8px!important}
+ .brand-centred img{transform:scale(1.02)}
+ .brand-centred:hover img{transform:scale(1.02)}
+ .site-header .basket-top{right:12px!important;top:50%!important;min-height:40px;padding:8px 10px!important;border-radius:11px!important}
+}
+@media(max-width:380px){
+ .site-header{height:108px!important}
+ .brand-centred{width:calc(100% - 94px)!important;height:96px!important}
+ .site-header .basket-top{right:8px!important;padding:7px 8px!important}
+}
+
 </style>
 </head>
 <body>
@@ -270,12 +408,15 @@ footer{background:#fffaf5!important;padding:28px 18px!important;line-height:1.9!
     <select id="mount-select"><option value="">Select a mounting job…</option></select>
     <div class="selection-row"><div class="selected-info" id="mount-info">Choose an item to see its fixed price.</div><button class="add-btn" id="add-mount" type="button" disabled>Add to basket</button></div>
    </article>
+   <article class="service-card other-card" id="contact" aria-labelledby="quote-heading">
+    <div class="service-icon" aria-hidden="true">✦</div>
+    <div class="eyebrow">SOMETHING DIFFERENT?</div>
+    <h3 id="quote-heading">Not on the list?</h3>
+    <p>Painting, decorating, repairs or another small job? Tell us what you need and we'll provide a free, no-obligation quote.</p>
+    <a class="contact" href="https://wa.me/447301630675?text=Hi%20Fox%20Fix%20%26%20Finish%2C%20I'd%20like%20a%20quote%20for%20a%20job%20not%20listed%20on%20your%20website." target="_blank" rel="noopener">Get a free quote ↗</a>
+   </article>
   </div>
   <div class="promo-note"><strong>Clear, upfront pricing:</strong> Prices are fixed for the listed standard jobs, with travel included in our normal service area. Materials and parts are extra and agreed before work begins.</div>
- </section>
- <section class="other" id="contact">
-  <div><div class="eyebrow">SERVICE THREE · BESPOKE QUOTES</div><h2>Not on the list?</h2><p>Painting, decorating, repairs or something a little different? Tell us what you need and we'll get back to you with a free, no-obligation quote.</p></div>
-  <a class="contact" href="https://wa.me/447301630675?text=Hi%20Fox%20Fix%20%26%20Finish%2C%20I'd%20like%20a%20quote%20for%20a%20job%20not%20listed%20on%20your%20website." target="_blank" rel="noopener">Get a free quote ↗</a>
  </section>
 </main>
 <footer id="how"><strong>Fox Fix & Finish Property Maintenance</strong> · Reliable · Professional · Affordable<br>Call or WhatsApp <strong>07301 630675</strong> · Booking requests are confirmed personally.</footer>
