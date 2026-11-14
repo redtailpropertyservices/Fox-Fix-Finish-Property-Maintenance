@@ -104,6 +104,134 @@ main{padding-top:34px}
 .other{max-width:900px;margin:22px auto 0}
 @media(max-width:700px){.service-grid{grid-template-columns:1fr;gap:12px;margin-top:16px}.service-card{padding:18px}.service-card>p{min-height:0;margin-bottom:16px}.service-card .selection-row{margin-top:12px;padding-top:12px}.other{margin-top:16px}}
 
+
+/* ===== Fox Fix & Finish premium visual refresh ===== */
+:root{
+ --orange:#ef741b;--orange-dark:#c65a0d;--ink:#24221f;--muted:#77716a;
+ --cream:#fffaf4;--peach:#fff0e2;--line:#eee3d7;
+ --shadow:0 18px 48px rgba(66,43,20,.10);
+}
+body{background:linear-gradient(180deg,#fffaf4 0,#fff 440px);color:#29251f}
+.site-header{
+ height:178px!important;padding:8px 170px!important;
+ background:rgba(255,255,255,.94)!important;
+ border-bottom:1px solid #f0e5da!important;
+ box-shadow:0 8px 30px rgba(68,44,22,.055)!important;
+ backdrop-filter:blur(16px);
+}
+.site-header .brand-centred{
+ width:min(510px,58vw)!important;height:166px!important;
+ filter:drop-shadow(0 7px 12px rgba(45,30,16,.10));
+}
+.site-header .brand-centred img{width:100%!important;height:100%!important;object-fit:contain}
+.site-header .header-links{left:max(28px,calc((100% - 1180px)/2))!important}
+.site-header .basket-top{
+ right:max(28px,calc((100% - 1180px)/2))!important;
+ padding:13px 18px!important;border-radius:14px!important;
+ background:#26231f!important;box-shadow:0 7px 18px #28201820;
+}
+.intro{
+ position:relative;overflow:hidden;padding:54px 20px 44px!important;
+ background:
+ radial-gradient(ellipse at 12% 20%,rgba(255,191,130,.24),transparent 34%),
+ radial-gradient(ellipse at 88% 10%,rgba(239,116,27,.10),transparent 28%),
+ linear-gradient(135deg,#fff4e8 0%,#fffdf9 56%,#fff8f0 100%)!important;
+}
+.intro:after{content:"";position:absolute;width:360px;height:360px;border:1px solid #ef741b18;border-radius:50%;right:-130px;bottom:-245px;box-shadow:0 0 0 28px #ef741b08,0 0 0 58px #ef741b06;pointer-events:none}
+.intro h1{font-size:clamp(32px,4.3vw,48px)!important;letter-spacing:-2px!important;color:#27231e}
+.intro h1 em{color:#e96b12!important}
+.intro p{font-size:14px!important;max-width:620px!important;color:#71685f!important}
+.intro .trust{gap:12px 24px!important;font-size:11px!important}
+main{max-width:1120px!important;padding-top:52px!important}
+.section-head{margin-bottom:24px!important}
+.section-head h2{font-size:clamp(27px,3vw,34px)!important;letter-spacing:-1.3px!important}
+.section-head p{font-size:12px!important;max-width:360px!important}
+.service-grid{gap:22px!important}
+.service-card{
+ position:relative;overflow:hidden!important;
+ background:linear-gradient(145deg,#fff 0%,#fffdf9 100%)!important;
+ border:1px solid #eee2d5!important;border-radius:22px!important;
+ padding:30px!important;box-shadow:0 12px 35px rgba(61,42,20,.055)!important;
+ transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease!important;
+}
+.service-card:before{content:"";position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#ed741b,#ffbd78);opacity:.95}
+.service-card:after{content:"";position:absolute;right:-54px;top:-72px;width:190px;height:190px;border-radius:50%;background:radial-gradient(circle,#fff0e2 0,rgba(255,240,226,.0) 72%);pointer-events:none}
+.service-card:hover{transform:translateY(-5px)!important;box-shadow:0 22px 48px rgba(61,42,20,.10)!important;border-color:#edc49f!important}
+.service-icon{width:58px!important;height:58px!important;border-radius:18px!important;background:linear-gradient(145deg,#fff0e2,#ffe2c8)!important;color:#d96512!important;box-shadow:inset 0 1px #fff,0 7px 16px #c95a0d12!important;font-size:27px!important;margin-bottom:18px!important}
+.service-card .eyebrow{font-size:10px!important;letter-spacing:1.4px!important}
+.service-card h3{font:800 25px/1.15 Manrope!important;letter-spacing:-.8px!important;margin:9px 0 8px!important;color:#29251f}
+.service-card p{font-size:13px!important;line-height:1.65!important;color:#77716a!important;margin:0 0 24px!important;min-height:42px}
+.service-card label{font-size:11px!important;letter-spacing:.2px!important;color:#514a42!important;margin-bottom:9px!important}
+.service-card select{
+ border:1px solid #e6d9cc!important;border-radius:13px!important;padding:16px 46px 16px 15px!important;
+ background-color:#fff!important;font-size:13px!important;box-shadow:0 3px 10px #2d1b0c08!important;
+ transition:border-color .2s,box-shadow .2s;
+}
+.service-card select:focus{border-color:#ed741b!important;box-shadow:0 0 0 4px #ed741b18!important}
+.selection-row{padding-top:18px!important;margin-top:18px!important;border-color:#f0e7df!important}
+.selected-info{font-size:11px!important;color:#80766c!important}
+.selected-info strong{font-size:28px!important;color:#d96210!important}
+.add-btn{border-radius:11px!important;padding:13px 17px!important;background:#29251f!important;color:white!important;font-size:11px!important;box-shadow:0 6px 14px #29251f18!important;transition:all .2s ease}
+.add-btn:hover{background:#ed741b!important;transform:translateY(-1px)}
+.add-btn:disabled{background:#e8e2dc!important;color:#aaa!important;box-shadow:none!important}
+.promo-note{max-width:none!important;border-radius:13px!important;padding:15px 18px!important;background:linear-gradient(90deg,#fff4e9,#fffaf5)!important;border-color:#f1dfce!important;font-size:11px!important}
+.other{
+ margin-top:54px!important;padding:32px 34px!important;border-radius:22px!important;
+ background:linear-gradient(115deg,#2a2723 0%,#39332c 100%)!important;color:white!important;
+ box-shadow:0 18px 38px rgba(35,28,20,.14)!important;position:relative;overflow:hidden
+}
+.other:after{content:"";position:absolute;right:-75px;top:-110px;width:280px;height:280px;border:1px solid #ef741b55;border-radius:50%;box-shadow:0 0 0 24px #ef741b12,0 0 0 50px #ef741b0b;pointer-events:none}
+.other .eyebrow{color:#ffad69!important}
+.other h2{font-size:27px!important;color:#fff!important;letter-spacing:-.7px}
+.other p{color:#d6cec5!important;font-size:12px!important}
+.other .contact{background:#ed741b!important;border-radius:12px!important;padding:15px 20px!important;box-shadow:0 8px 20px #ed741b35!important;position:relative;z-index:1;transition:transform .2s,background .2s}
+.other .contact:hover{background:#ff8730!important;transform:translateY(-2px)}
+.bottom-bar{border-radius:17px!important;padding:13px 15px 13px 20px!important;box-shadow:0 18px 45px #17120f40!important}
+.view-basket{border-radius:11px!important;padding:13px 19px!important}
+.drawer{box-shadow:-20px 0 60px #17120f30!important}
+.drawer-head{padding-bottom:19px!important}
+.booking{background:linear-gradient(145deg,#fff5eb,#fffaf5)!important;border-color:#f0dfcf!important;border-radius:16px!important}
+.booking h3{font-size:19px!important}
+.booking input,.booking textarea{border-radius:10px!important;padding:12px!important}
+.booking input:focus,.booking textarea:focus{outline:3px solid #ed741b20!important;border-color:#ed741b!important}
+.send{background:linear-gradient(100deg,#e96812,#f58b36)!important;border-radius:11px!important;box-shadow:0 8px 18px #ed741b30!important}
+footer{background:#fffaf5!important;padding:28px 18px!important;line-height:1.9!important}
+@media(max-width:760px){
+ .site-header{height:136px!important;padding:5px 10px!important}
+ .site-header .brand-centred{width:min(355px,84vw)!important;height:126px!important}
+ .site-header .basket-top{right:12px!important;top:8px!important;padding:9px 11px!important;font-size:10px!important}
+ .site-header .header-links{display:none!important}
+ .intro{padding:34px 17px 30px!important}
+ .intro h1{font-size:34px!important;letter-spacing:-1.5px!important}
+ main{padding:34px 15px 90px!important}
+ .service-grid{grid-template-columns:1fr!important;gap:15px!important}
+ .service-card{padding:23px!important;border-radius:18px!important}
+ .service-card h3{font-size:23px!important}
+ .service-card p{min-height:0;margin-bottom:20px!important}
+ .selection-row{align-items:center}
+ .other{margin-top:34px!important;padding:25px 22px!important}
+ .other .contact{display:inline-flex;margin-top:18px}
+}
+@media(max-width:390px){
+ .site-header .brand-centred{width:82vw!important}
+ .site-header .basket-top{top:auto!important;bottom:5px!important;right:10px!important}
+ .service-card{padding:19px!important}
+ .selection-row{gap:8px!important}
+ .add-btn{padding:12px!important}
+}
+/* Contact preference controls */
+.contact-preference{margin:16px 0 8px;padding:0;border:0}
+.contact-preference legend{font-size:11px;font-weight:800;margin-bottom:9px;color:#39332d}
+.contact-options{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}
+.contact-option{position:relative;display:block!important;margin:0!important;cursor:pointer}
+.contact-option input{position:absolute;opacity:0;inset:0;width:100%;height:100%;cursor:pointer}
+.contact-option span{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;min-height:67px;padding:8px 4px;border:1px solid #e8ddd1;border-radius:11px;background:#fff;color:#62594f;font-size:10px;font-weight:800;transition:.18s}
+.contact-option b{font-size:19px;line-height:1}
+.contact-option input:checked+span{border-color:#ed741b;background:#fff0e2;color:#bd5109;box-shadow:0 0 0 2px #ed741b18}
+.contact-option input:focus-visible+span{outline:3px solid #ed741b55;outline-offset:2px}
+.contact-hint{font-size:9px!important;color:#81776d!important;line-height:1.5!important;margin:8px 0 0!important}
+@media(max-width:390px){.contact-options{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
 </style>
 </head>
 <body>
@@ -170,7 +298,19 @@ main{padding-top:34px}
      <div><label for="customer-date">Preferred date</label><input id="customer-date" name="date" type="date"></div>
     </div>
     <label for="customer-notes">Anything we should know? (optional)</label><textarea id="customer-notes" name="notes" placeholder="Access, wall type, item details..."></textarea>
-    <button class="send" id="send-booking" type="submit" disabled>Send booking request on WhatsApp ↗</button>
+    <fieldset class="contact-preference">
+     <legend>How would you prefer us to contact you?</legend>
+     <div class="contact-options">
+      <label class="contact-option"><input type="radio" name="contact-method" value="call" checked><span><b>☎</b>Phone call</span></label>
+      <label class="contact-option"><input type="radio" name="contact-method" value="sms"><span><b>▤</b>Text / SMS</span></label>
+      <label class="contact-option"><input type="radio" name="contact-method" value="whatsapp"><span><b>◉</b>WhatsApp</span></label>
+      <label class="contact-option"><input type="radio" name="contact-method" value="email"><span><b>✉</b>Email</span></label>
+     </div>
+     <p class="contact-hint" id="contact-hint">We'll call you on the number you provide. Please include it below.</p>
+    </fieldset>
+    <label for="customer-phone">Best contact number</label><input id="customer-phone" name="phone" type="tel" autocomplete="tel" placeholder="Your phone number" required>
+    <label for="customer-email">Email address (for email contact)</label><input id="customer-email" name="email" type="email" autocomplete="email" placeholder="Your email address">
+    <button class="send" id="send-booking" type="submit" disabled>Send booking request ↗</button>
     <p class="small-print">No payment is taken online. We'll check availability and confirm the details with you before the booking is agreed.</p>
    </form>
   </div>
@@ -292,13 +432,43 @@ function closeBasket(){document.getElementById("overlay").classList.remove("open
 document.getElementById("close-basket").addEventListener("click",closeBasket);
 document.getElementById("overlay").addEventListener("click",e=>{if(e.target.id==="overlay")closeBasket()});
 document.addEventListener("keydown",e=>{if(e.key==="Escape")closeBasket()});
+const contactHint=document.getElementById("contact-hint");
+const contactRadios=[...document.querySelectorAll('input[name="contact-method"]')];
+const contactCopy={
+ call:"We'll send us a text asking us to call you back, with your booking details included.",
+ sms:"We'll send your booking request as a text message to Fox Fix & Finish.",
+ whatsapp:"Your booking request will open in WhatsApp with the details filled in.",
+ email:"Your email app will open with the booking details ready to send. Add our business email address as the recipient."
+};
+contactRadios.forEach(r=>r.addEventListener("change",()=>{
+ contactHint.textContent=contactCopy[document.querySelector('input[name="contact-method"]:checked').value];
+}));
 document.getElementById("booking-form").addEventListener("submit",e=>{
  e.preventDefault();const {count,total}=totals();if(!count)return;
  const f=new FormData(e.currentTarget),lines=Object.entries(basket).map(([id,qty])=>{const j=jobs[Number(id)];return qty+" × "+j.name+" — "+money(j.price*qty)}).join("\n");
- const msg=["Hi Fox Fix & Finish, I'd like to request a booking for these jobs:","",lines,"","Estimated total: "+money(total),"","Name: "+f.get("name"),"Postcode / area: "+f.get("postcode"),"Preferred date: "+(f.get("date")||"Flexible"),"Extra details: "+(f.get("notes")||"None"),"","Please let me know your availability and confirm the booking."].join("\n");
- window.open("https://wa.me/"+PHONE+"?text="+encodeURIComponent(msg),"_blank","noopener");
+ const method=f.get("contact-method");
+ const msg=["Hi Fox Fix & Finish, I'd like to request a booking for these jobs:","",lines,"","Estimated total: "+money(total),"","Name: "+f.get("name"),"Phone: "+(f.get("phone")||"Not provided"),"Email: "+(f.get("email")||"Not provided"),"Postcode / area: "+f.get("postcode"),"Preferred date: "+(f.get("date")||"Flexible"),"Preferred contact: "+method,"Extra details: "+(f.get("notes")||"None"),"","Please let me know your availability and confirm the booking."].join("\n");
+ const encoded=encodeURIComponent(msg);
+ if(method==="whatsapp"){
+  window.open("https://wa.me/"+PHONE+"?text="+encoded,"_blank","noopener");
+ }else if(method==="sms"){
+  window.location.href="sms:"+PHONE+"?&body="+encoded;
+ }else if(method==="call"){
+  const callMsg="Please call me back about my Fox Fix & Finish booking request. My name is "+f.get("name")+". My number is "+(f.get("phone")||"");
+  window.location.href="sms:"+PHONE+"?&body="+encodeURIComponent(callMsg+"\n\n"+msg);
+  alert("Your text app will open with a call-back request and your booking details. Send it to complete your request.");
+ }else{
+  window.location.href="mailto:?subject="+encodeURIComponent("Fox Fix & Finish booking request")+"&body="+encoded;
+ }
 });
 const dateInput=document.getElementById("customer-date");const today=new Date();dateInput.min=new Date(today.getTime()-today.getTimezoneOffset()*60000).toISOString().slice(0,10);
+document.getElementById("booking-form").addEventListener("change",e=>{
+ if(e.target.name==="contact-method"){
+  const email=document.getElementById("customer-email");
+  email.required=e.target.value==="email";
+ }
+});
+
 populateServicePickers();updateSelection("assembly");updateSelection("mount");updateBasket();
 </script>
 </body>
