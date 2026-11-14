@@ -1,81 +1,213 @@
-
 <!doctype html>
 <html lang="en-GB">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#fffaf5">
-<meta name="description" content="Fox Fix & Finish Property Maintenance. Reliable, professional and affordable small-job handyman services across Oxfordshire.">
-<title>Fox Fix & Finish | Small Jobs, Done Right</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#fffaf4">
+<title>Fox Fix & Finish | Book a Small Job</title>
+<meta name="description" content="Choose your jobs, see your total and send a booking request to Fox Fix & Finish Property Maintenance.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--orange:#ed741b;--orange-dark:#c95a0d;--ink:#282722;--muted:#77736d;--cream:#fffaf4;--peach:#fff0e2;--line:#eee6dc;--green:#39734d;--shadow:0 12px 35px rgba(61,42,20,.08)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:#fffdfa;color:var(--ink);font-family:"DM Sans",sans-serif;-webkit-font-smoothing:antialiased}button,input,textarea{font:inherit}button{cursor:pointer}a{color:inherit;text-decoration:none}
+header{height:68px;background:#fff;position:sticky;top:0;z-index:20;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 max(18px,calc((100% - 1120px)/2));gap:18px}.brand{display:flex;align-items:center;gap:10px;min-width:0}.brand img{width:58px;height:48px;object-fit:contain}.brand strong{font:800 15px Manrope;white-space:nowrap}.brand span{display:block;font:700 9px "DM Sans";letter-spacing:1.2px;color:var(--orange);text-transform:uppercase;margin-top:2px}.header-links{display:flex;align-items:center;gap:24px;font-size:12px;font-weight:700;color:#625e58}.basket-top{border:0;background:var(--ink);color:white;border-radius:999px;padding:10px 15px;font-size:12px;font-weight:800;display:flex;align-items:center;gap:9px}.basket-count{display:grid;place-items:center;background:var(--orange);width:21px;height:21px;border-radius:50%;font-size:10px}
+.hero{background:linear-gradient(110deg,#fff6ec,#fffdf9 65%);padding:48px 18px 34px}.hero-inner{max-width:1080px;margin:auto;display:grid;grid-template-columns:1.2fr .8fr;align-items:center;gap:35px}.eyebrow{color:var(--orange-dark);font-size:10px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase}.hero h1{font:800 clamp(34px,5vw,56px)/1.04 Manrope;letter-spacing:-2.5px;margin:12px 0}.hero h1 em{font-style:normal;color:var(--orange)}.hero p{max-width:540px;color:var(--muted);font-size:14px;line-height:1.7;margin:0}.trust{display:flex;flex-wrap:wrap;gap:9px 18px;margin-top:20px;font-size:11px;font-weight:700}.trust span:before{content:"✓";color:var(--orange);font-weight:900;margin-right:7px}.hero-card{background:white;border:1px solid var(--line);border-radius:18px;padding:21px;box-shadow:var(--shadow)}.hero-card-top{display:flex;align-items:center;gap:12px}.hero-icon{width:44px;height:44px;border-radius:13px;background:var(--peach);display:grid;place-items:center;font-size:22px}.hero-card strong{font:800 15px Manrope}.hero-card small{display:block;color:var(--muted);font-size:10px;margin-top:4px}.hero-card hr{border:0;border-top:1px solid var(--line);margin:16px 0}.hero-card ul{padding:0;margin:0;list-style:none;display:grid;gap:10px;font-size:11px;color:#5e5a53}.hero-card li:before{content:"✓";color:var(--green);font-weight:900;margin-right:9px}
+main{max-width:1080px;margin:auto;padding:38px 18px 90px}.section-head{display:flex;justify-content:space-between;align-items:end;gap:18px;margin-bottom:18px}.section-head h2{font:800 27px Manrope;letter-spacing:-1px;margin:6px 0 0}.section-head p{color:var(--muted);font-size:11px;margin:0;max-width:300px;line-height:1.6}.toolbar{display:flex;gap:10px;align-items:center;justify-content:space-between;margin:18px 0}.search{flex:1;max-width:330px;position:relative}.search input{width:100%;border:1px solid var(--line);border-radius:10px;padding:12px 14px 12px 38px;background:#fff;font-size:12px;outline:none}.search:before{content:"⌕";position:absolute;left:14px;top:7px;font-size:21px;color:#aaa}.filters{display:flex;gap:7px;flex-wrap:wrap}.filter{border:1px solid var(--line);background:#fff;border-radius:999px;padding:9px 13px;font-size:11px;font-weight:800;color:#625d56}.filter.active{background:var(--ink);border-color:var(--ink);color:white}
+.catalogue{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.job{background:white;border:1px solid var(--line);border-radius:13px;padding:15px;display:flex;flex-direction:column;min-height:148px;transition:.18s}.job:hover{border-color:#efb17e;box-shadow:0 7px 20px #5b37150c;transform:translateY(-2px)}.job-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}.job h3{font:700 13px Manrope;margin:0;line-height:1.4}.job .type{font-size:9px;color:#999;margin-top:5px}.job-price{font:800 19px Manrope;color:var(--orange-dark);white-space:nowrap}.job-price small{font:500 9px "DM Sans";color:#999;display:block;text-align:right;text-decoration:line-through}.job-bottom{display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:15px}.job-unit{font-size:9px;color:#8a857e}.add-btn{border:0;background:var(--peach);color:var(--orange-dark);border-radius:8px;padding:9px 12px;font-size:10px;font-weight:800}.add-btn:hover{background:var(--orange);color:white}.empty{grid-column:1/-1;text-align:center;border:1px dashed var(--line);padding:32px;border-radius:12px;color:var(--muted);font-size:12px}
+.promo-note{margin:18px 0 0;background:#fff7ef;border:1px solid #f2e2d2;border-radius:10px;padding:12px 14px;font-size:10px;color:#7d6b59;line-height:1.6}.promo-note strong{color:var(--orange-dark)}
+.bottom-bar{position:fixed;z-index:25;bottom:14px;left:50%;transform:translateX(-50%);width:min(560px,calc(100% - 28px));background:var(--ink);color:white;border-radius:15px;padding:11px 13px 11px 17px;box-shadow:0 12px 35px #0003;display:flex;align-items:center;justify-content:space-between;gap:10px}.bottom-bar[hidden]{display:none}.bottom-total small{display:block;color:#d1cbc3;font-size:9px}.bottom-total strong{font:800 18px Manrope}.view-basket{border:0;background:var(--orange);color:white;border-radius:10px;padding:12px 16px;font-size:11px;font-weight:800}
+.overlay{position:fixed;inset:0;background:#1d1b18a6;z-index:40;display:none;justify-content:flex-end}.overlay.open{display:flex}.drawer{width:min(480px,100%);height:100%;background:#fffdfa;overflow:auto;padding:22px;box-shadow:-15px 0 45px #0002}.drawer-head{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);padding-bottom:16px}.drawer-head h2{font:800 22px Manrope;margin:0}.close{border:0;background:#f4eee7;border-radius:50%;width:34px;height:34px;font-size:19px}.basket-empty{text-align:center;padding:38px 10px;color:var(--muted);font-size:12px}.basket-empty b{display:block;font:800 17px Manrope;color:var(--ink);margin-bottom:7px}.basket-list{display:grid;gap:10px;margin:18px 0}.basket-line{display:grid;grid-template-columns:1fr auto;gap:10px;border:1px solid var(--line);border-radius:10px;padding:12px}.basket-line strong{font-size:11px}.basket-line small{display:block;color:#999;font-size:9px;margin-top:4px}.line-controls{display:flex;align-items:center;gap:7px;margin-top:8px}.line-controls button{border:1px solid var(--line);background:#fff;border-radius:6px;width:25px;height:25px;font-weight:800}.line-controls .remove{border:0;color:#b34d26;background:transparent;font-size:10px;width:auto}.line-total{font:800 13px Manrope;color:var(--orange-dark);white-space:nowrap}.basket-summary{border-top:1px solid var(--line);padding-top:14px;display:flex;justify-content:space-between;align-items:center}.basket-summary span{font-size:11px;color:var(--muted)}.basket-summary strong{font:800 23px Manrope}.booking{margin-top:20px;background:#fff5eb;border:1px solid #f2e1d1;border-radius:13px;padding:16px}.booking h3{font:800 16px Manrope;margin:0 0 5px}.booking>p{font-size:10px;color:var(--muted);margin:0 0 14px}.booking label{display:block;font-size:10px;font-weight:800;margin:10px 0 5px}.booking input,.booking textarea{width:100%;border:1px solid #e8ddd1;border-radius:8px;padding:11px;background:white;font-size:12px;outline:none}.booking textarea{min-height:65px;resize:vertical}.booking .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}.send{width:100%;border:0;background:var(--orange);color:white;border-radius:9px;padding:14px;font-size:12px;font-weight:800;margin-top:14px}.send:disabled{opacity:.45;cursor:not-allowed}.small-print{font-size:9px;line-height:1.5;color:#8e877f;text-align:center;margin:10px 0}
+.other{margin-top:50px;border-radius:16px;background:#fff4e9;padding:25px;display:flex;justify-content:space-between;align-items:center;gap:20px}.other h2{font:800 22px Manrope;margin:5px 0}.other p{font-size:11px;color:var(--muted);line-height:1.6;margin:0;max-width:590px}.contact{white-space:nowrap;border:0;border-radius:9px;background:var(--ink);color:white;padding:13px 16px;font-size:11px;font-weight:800}
+footer{border-top:1px solid var(--line);padding:22px 18px;text-align:center;color:#89837a;font-size:10px}footer strong{color:var(--ink)}
+@media(max-width:760px){header{height:60px;padding:0 14px}.brand img{width:47px;height:42px}.brand strong{font-size:12px}.brand span{font-size:8px}.header-links{display:none}.hero{padding:31px 16px 25px}.hero-inner{grid-template-columns:1fr;gap:20px}.hero h1{font-size:39px}.hero p{font-size:12px}.hero-card{padding:15px}.hero-card ul{grid-template-columns:1fr 1fr;gap:8px}.hero-card li{font-size:10px}.section-head{display:block}.section-head p{margin-top:8px}.section-head h2{font-size:24px}.toolbar{display:block}.search{max-width:none;margin-bottom:11px}.filters{flex-wrap:nowrap;overflow:auto;padding-bottom:4px}.filter{white-space:nowrap}.catalogue{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.job{padding:12px;min-height:145px}.job h3{font-size:11px}.job-price{font-size:16px}.job-bottom{padding-top:12px}.add-btn{padding:8px 9px;font-size:9px}.promo-note{font-size:9px}.other{display:block;padding:19px}.other h2{font-size:19px}.contact{margin-top:14px;width:100%}main{padding-top:28px}.basket-top{padding:8px 10px;font-size:10px}.bottom-bar{bottom:9px}.drawer{padding:17px}.booking .two{grid-template-columns:1fr 1fr}}
+@media(max-width:380px){.catalogue{grid-template-columns:1fr}.job{min-height:120px}.brand strong{font-size:11px}}
+</style>
 </head>
 <body>
-<header class="header">
-  <a class="brand" href="#home"><img src="fox-fix-finish-logo.png" alt="Fox Fix & Finish Property Maintenance logo"></a>
-  <button class="menu" aria-label="Toggle navigation" aria-expanded="false">☰</button>
-  <nav class="nav"><a class="active" href="#home">Home</a><a href="#services">Services</a><a href="#prices">Prices</a><a href="#booking">Book a job</a><a href="#about">About</a><a href="#contact">Contact</a></nav>
-  <a class="header-cta" href="#booking">Book a job <span>→</span></a>
+<header>
+  <a class="brand" href="#">
+    <img src="fox-fix-finish-logo.png" alt="Fox Fix & Finish logo">
+    <span><strong>Fox Fix & Finish</strong>Property Maintenance</span>
+  </a>
+  <nav class="header-links"><a href="#jobs">Choose jobs</a><a href="#how">How it works</a><a href="#contact">Contact</a></nav>
+  <button class="basket-top" id="open-basket" type="button">Basket <span class="basket-count" id="top-count">0</span></button>
 </header>
 
-<main>
-<section class="hero" id="home">
-  <div class="hero-copy">
-    <div class="eyebrow"><span></span> PROPERTY MAINTENANCE & HANDYMAN SERVICES</div>
-    <h1>Small jobs,<br><em>done right.</em></h1>
-    <p>Reliable, professional and affordable help for the jobs around your home that you never quite get round to.</p>
-    <div class="trust-points"><span>✓ Reliable</span><i></i><span>✓ Professional</span><i></i><span>✓ Affordable</span></div>
-    <div class="hero-actions"><a class="btn primary" href="#booking">Book a fixed-price job <b>→</b></a><a class="btn secondary" href="#contact">Get a free quote</a></div>
-    <small class="service-note">Proudly serving Oxfordshire and surrounding areas · Local travel included</small>
+<section class="hero">
+ <div class="hero-inner">
+  <div>
+   <div class="eyebrow">THE SMALL JOB SPECIALISTS</div>
+   <h1>Your to-do list.<br><em>Sorted.</em></h1>
+   <p>Choose the jobs you need, add them to your basket and see your price straight away. One simple booking for all those little jobs around the home.</p>
+   <div class="trust"><span>Clear fixed prices</span><span>Local travel included</span><span>Friendly service</span></div>
   </div>
-  <div class="hero-photo" role="img" aria-label="Warm, welcoming modern living room with orange accents"><div class="photo-tag"><b>THE SMALL JOB SPECIALISTS</b><span>Making home life that little bit easier</span></div></div>
-</section>
-
-<section class="service-shortcuts" id="services">
-  <a href="#booking" data-job="TV & wall mounting"><span class="service-icon">▣</span><b>TV & wall mounting</b><small>Brackets, shelves, mirrors</small></a>
-  <a href="#booking" data-job="Flat-pack assembly"><span class="service-icon">⚒</span><b>Flat-pack assembly</b><small>Beds, desks, wardrobes</small></a>
-  <a href="#booking" data-job="Painting & decorating"><span class="service-icon">▰</span><b>Painting & decorating</b><small>Freshen up your space</small></a>
-  <a href="#booking" data-job="Blinds & curtains"><span class="service-icon">▤</span><b>Blinds & curtains</b><small>Poles, rails and blinds</small></a>
-  <a href="#booking" data-job="General repairs"><span class="service-icon">⌂</span><b>General repairs</b><small>Those little jobs</small></a>
-  <a href="#booking" data-job="Other small jobs"><span class="service-icon">＋</span><b>Other small jobs</b><small>Tell us what you need</small></a>
-</section>
-
-<section class="booking-layout" id="booking">
-  <div class="booking-panel">
-    <div class="panel-heading"><div class="heading-icon">▦</div><div><span class="eyebrow">SIMPLE, STRAIGHTFORWARD BOOKING</span><h2>Book a fixed-price job</h2><p>Choose your job, select a preferred date and send your booking request.</p></div></div>
-    <div class="booking-steps"><span class="current">1 <small>Choose job</small></span><i></i><span>2 <small>Your details</small></span><i></i><span>3 <small>Request booking</small></span></div>
-    <form id="booking-form">
-      <div class="form-grid">
-        <label class="full">What do you need help with?
-          <select id="job" name="job" required><option value="">Choose a job</option><option>TV & wall mounting</option><option>Flat-pack assembly</option><option>Curtain pole installation</option><option>Roller blind installation</option><option>Other blinds & fittings</option><option>Painting & decorating</option><option>General repairs</option><option>Multiple jobs / bundle</option><option>Other small jobs</option></select>
-        </label>
-        <label>Job size / item<select name="size"><option>Not sure yet</option><option>One item</option><option>Two items</option><option>Three or more items</option><option>Large / complex job</option></select></label>
-        <label>Preferred date<input name="date" type="date" id="date" required></label>
-        <label>Your name<input name="name" autocomplete="name" placeholder="Full name" required></label>
-        <label>Postcode / area<input name="area" autocomplete="postal-code" placeholder="e.g. OX11 / Didcot" required></label>
-        <label class="full">A few details about the job<textarea name="details" rows="3" placeholder="Tell us what needs doing. You can send photos in WhatsApp afterwards."></textarea></label>
-      </div>
-      <div class="booking-footer"><div><small>YOUR PRICE</small><strong id="price-display">Choose a job</strong><small id="price-note">We'll confirm the exact price before your booking is accepted.</small></div><button class="btn primary" type="submit">Continue to WhatsApp <b>→</b></button></div>
-    </form>
-  </div>
-  <aside class="side-panels">
-    <div class="info-card area-card"><span class="side-icon">⌖</span><div><h3>Our service area</h3><b>Oxfordshire & surrounding areas</b><p>Including Didcot, Wallingford, Oxford, Abingdon and nearby towns.</p></div></div>
-    <div class="info-card why-card"><span class="side-icon">✦</span><div><h3>Why choose Fox Fix & Finish?</h3><ul><li>Clear, upfront pricing</li><li>Friendly, reliable service</li><li>Care taken in your home</li><li>Free, no-obligation quotes</li><li>Local travel included</li></ul></div></div>
+  <aside class="hero-card">
+   <div class="hero-card-top"><div class="hero-icon">🧰</div><div><strong>Book more than one job</strong><small>Build your own little job list</small></div></div>
+   <hr>
+   <ul><li>Add different jobs together</li><li>Change quantities anytime</li><li>See your total instantly</li><li>Send one booking request</li></ul>
   </aside>
+ </div>
 </section>
 
-<section class="prices-section" id="prices"><div class="section-title"><span class="eyebrow">NO NASTY SURPRISES</span><h2>Clear prices. <em>Simple choices.</em></h2><p>Popular small jobs with straightforward starting prices. We'll confirm the exact price once we've checked the details.</p></div>
-<div class="price-cards">
-  <article><span class="pill">WALL MOUNTING</span><h3>TV wall mounting</h3><strong>From £65</strong><p>TV bracket fitting and secure installation. Price depends on TV size, wall type and bracket.</p><a href="#booking" data-job="TV & wall mounting">Book this job →</a></article>
-  <article><span class="pill">FURNITURE</span><h3>Flat-pack assembly</h3><strong>From £35</strong><p>Desks, bedside tables, drawers and larger furniture. Select the item and size when requesting.</p><a href="#booking" data-job="Flat-pack assembly">Book this job →</a></article>
-  <article><span class="pill">WINDOW FITTINGS</span><h3>Curtain pole fitting</h3><strong>From £25</strong><p>Installation of a customer-supplied curtain pole in a suitable fixing surface.</p><a href="#booking" data-job="Curtain pole installation">Book this job →</a></article>
-  <article><span class="pill">WINDOW FITTINGS</span><h3>Roller blind fitting</h3><strong>From £25</strong><p>Price per blind for standard installation. Multiple blinds can be quoted together.</p><a href="#booking" data-job="Roller blind installation">Book this job →</a></article>
-</div><p class="price-disclaimer">These are draft example prices for the website preview and must be checked against your approved price list before publishing. Materials, specialist fixings and non-standard work may cost extra. No payment is taken on this website.</p></section>
-
-<section class="about" id="about"><div class="about-mark">FOX<br><b>FIX & FINISH</b><small>PROPERTY MAINTENANCE</small></div><div><span class="eyebrow">A FRIENDLY LOCAL HAND</span><h2>Good work, <em>without the fuss.</em></h2><p>From mounting a TV to building a wardrobe or ticking off a list of little repairs, Fox Fix & Finish is here to make looking after your home easier. Expect a friendly approach, tidy work and clear communication from first message to finished job.</p><a class="text-link" href="#contact">Have a different job in mind? Get in touch →</a></div></section>
-
-<section class="contact" id="contact"><div><span class="eyebrow">LET'S GET IT SORTED</span><h2>Got a job in mind?</h2><p>For larger, unusual or multi-job requests, send us a few details and we'll provide a free, no-obligation quote.</p><a href="tel:07301630675">☎ &nbsp;07301 630675</a><a href="https://wa.me/447301630675" target="_blank" rel="noopener">◉ &nbsp;WhatsApp us</a></div><form id="quote-form"><label>Your name<input name="name" required placeholder="Your name"></label><label>What needs doing?<textarea name="details" required rows="4" placeholder="Tell us about the job..."></textarea></label><label>Your area / postcode<input name="area" placeholder="e.g. OX10"></label><button class="btn primary" type="submit">Request my free quote →</button><small>Opens WhatsApp with your message ready to send.</small></form></section>
+<main>
+ <section id="jobs">
+  <div class="section-head"><div><div class="eyebrow">PICK WHAT YOU NEED</div><h2>What can we help with?</h2></div><p>Tap “Add” on every job you need. Your basket keeps a running total as you go.</p></div>
+  <div class="toolbar">
+   <div class="search"><input id="search" type="search" placeholder="Search TVs, wardrobes, blinds..." aria-label="Search jobs"></div>
+   <div class="filters" id="filters">
+    <button class="filter active" data-filter="all">All jobs</button>
+    <button class="filter" data-filter="mount">Mounting & fitting</button>
+    <button class="filter" data-filter="assembly">Furniture assembly</button>
+   </div>
+  </div>
+  <div class="catalogue" id="catalogue"></div>
+  <div class="promo-note"><strong>Christmas offer:</strong> 15% off the listed standard labour prices. Promotional prices are shown on each job. Travel is included within our normal service area; materials and parts are extra and agreed before work begins.</div>
+ </section>
+ <section class="other" id="contact">
+  <div><div class="eyebrow">NOT ON THE LIST?</div><h2>Something else needs fixing?</h2><p>Painting, decorating, repairs or a bigger to-do list? No problem. Message us directly and we'll arrange a free, no-obligation quote.</p></div>
+  <a class="contact" href="https://wa.me/447301630675?text=Hi%20Fox%20Fix%20%26%20Finish%2C%20I'd%20like%20to%20ask%20about%20a%20job%20not%20listed%20on%20your%20website." target="_blank" rel="noopener">Ask us about your job ↗</a>
+ </section>
 </main>
-<footer><a class="brand footer-brand" href="#home"><img src="fox-fix-finish-logo.png" alt="Fox Fix & Finish logo"></a><p>Reliable · Professional · Affordable</p><small>© <span id="year"></span> Fox Fix & Finish Property Maintenance</small></footer>
-<script src="script.js"></script>
-</body></html>
+<footer id="how"><strong>Fox Fix & Finish Property Maintenance</strong> · Reliable · Professional · Affordable<br>Call or WhatsApp <strong>07301 630675</strong> · Booking requests are confirmed personally.</footer>
+
+<div class="bottom-bar" id="bottom-bar" hidden>
+ <div class="bottom-total"><small><span id="bottom-count">0</span> items in your basket</small><strong id="bottom-total">£0</strong></div>
+ <button class="view-basket" id="view-basket" type="button">View basket →</button>
+</div>
+
+<div class="overlay" id="overlay" aria-hidden="true">
+ <section class="drawer" role="dialog" aria-modal="true" aria-labelledby="basket-title">
+  <div class="drawer-head"><div><div class="eyebrow">YOUR JOB LIST</div><h2 id="basket-title">Your basket</h2></div><button class="close" id="close-basket" aria-label="Close basket">×</button></div>
+  <div id="basket-content"></div>
+  <div class="booking" id="booking-box">
+   <h3>Where should we come?</h3><p>Just a few details and we'll get back to confirm a suitable time.</p>
+   <form id="booking-form">
+    <label for="customer-name">Your name</label><input id="customer-name" name="name" autocomplete="name" placeholder="Name" required>
+    <div class="two">
+     <div><label for="customer-postcode">Postcode / area</label><input id="customer-postcode" name="postcode" autocomplete="postal-code" placeholder="e.g. OX10" required></div>
+     <div><label for="customer-date">Preferred date</label><input id="customer-date" name="date" type="date"></div>
+    </div>
+    <label for="customer-notes">Anything we should know? (optional)</label><textarea id="customer-notes" name="notes" placeholder="Access, wall type, item details..."></textarea>
+    <button class="send" id="send-booking" type="submit" disabled>Send booking request on WhatsApp ↗</button>
+    <p class="small-print">No payment is taken online. We'll check availability and confirm the details with you before the booking is agreed.</p>
+   </form>
+  </div>
+ </section>
+</div>
+
+<script>
+const PHONE="447301630675";
+const jobs=[
+{cat:"mount",name:"TV up to 32 inches",price:34,standard:40,unit:"per TV"},
+{cat:"mount",name:"TV 33–43 inches",price:43,standard:50,unit:"per TV"},
+{cat:"mount",name:"TV 44–55 inches",price:51,standard:60,unit:"per TV"},
+{cat:"mount",name:"TV 56–65 inches",price:60,standard:70,unit:"per TV"},
+{cat:"mount",name:"TV 66–75 inches",price:72,standard:85,unit:"per TV"},
+{cat:"mount",name:"Full-motion bracket fitting add-on",price:13,standard:15,unit:"per TV"},
+{cat:"mount",name:"Cable trunking (up to 2 metres)",price:17,standard:20,unit:"per installation"},
+{cat:"mount",name:"Hang 1 picture or frame",price:10,standard:12,unit:"per item"},
+{cat:"mount",name:"Hang 3 pictures or frames",price:21,standard:25,unit:"for 3"},
+{cat:"mount",name:"Hang 5 pictures or frames",price:30,standard:35,unit:"for 5"},
+{cat:"mount",name:"Hang 10 pictures or frames",price:51,standard:60,unit:"for 10"},
+{cat:"mount",name:"Hang small mirror",price:17,standard:20,unit:"per mirror"},
+{cat:"mount",name:"Hang large / heavy mirror",price:26,standard:30,unit:"per mirror"},
+{cat:"mount",name:"Install 1 floating shelf",price:17,standard:20,unit:"per shelf"},
+{cat:"mount",name:"Install 2 floating shelves",price:30,standard:35,unit:"for 2"},
+{cat:"mount",name:"Install 3 floating shelves",price:43,standard:50,unit:"for 3"},
+{cat:"mount",name:"Install coat hooks / key holder",price:13,standard:15,unit:"per item"},
+{cat:"mount",name:"Install wall clock",price:10,standard:12,unit:"per clock"},
+{cat:"mount",name:"Install wall-mounted coat rack",price:17,standard:20,unit:"per item"},
+{cat:"mount",name:"Install bathroom accessory",price:15,standard:18,unit:"per item"},
+{cat:"mount",name:"Install curtain pole",price:26,standard:30,unit:"per pole"},
+{cat:"mount",name:"Install curtain track",price:30,standard:35,unit:"per track"},
+{cat:"mount",name:"Replace existing curtain pole",price:26,standard:30,unit:"per pole"},
+{cat:"mount",name:"Install 1 roller blind",price:26,standard:30,unit:"per blind"},
+{cat:"mount",name:"Install 2 roller blinds",price:47,standard:55,unit:"for 2"},
+{cat:"mount",name:"Install 4 roller blinds",price:81,standard:95,unit:"for 4"},
+{cat:"mount",name:"Install wooden Venetian blind",price:30,standard:35,unit:"per blind"},
+{cat:"mount",name:"Install vertical blind",price:30,standard:35,unit:"per blind"},
+{cat:"mount",name:"Install Roman blind",price:30,standard:35,unit:"per blind"},
+{cat:"mount",name:"Install bay-window curtain pole",price:55,standard:65,unit:"per pole"},
+{cat:"mount",name:"Remove existing blind or pole",price:10,standard:12,unit:"per item"},
+{cat:"mount",name:"Install curtain tiebacks (pair)",price:17,standard:20,unit:"per pair"},
+{cat:"mount",name:"Install curtain holdbacks (pair)",price:17,standard:20,unit:"per pair"},
+{cat:"assembly",name:"Bedside table",price:17,standard:20,unit:"per item"},
+{cat:"assembly",name:"Small desk",price:26,standard:30,unit:"per item"},
+{cat:"assembly",name:"Large office desk",price:38,standard:45,unit:"per item"},
+{cat:"assembly",name:"Gaming desk",price:38,standard:45,unit:"per item"},
+{cat:"assembly",name:"Chest of drawers (up to 6 drawers)",price:34,standard:40,unit:"per item"},
+{cat:"assembly",name:"2-door wardrobe",price:55,standard:65,unit:"per item"},
+{cat:"assembly",name:"3-door wardrobe",price:72,standard:85,unit:"per item"},
+{cat:"assembly",name:"4-door wardrobe",price:94,standard:110,unit:"per item"},
+{cat:"assembly",name:"Sliding-door wardrobe",price:102,standard:120,unit:"per item"},
+{cat:"assembly",name:"Bookcase",price:26,standard:30,unit:"per item"},
+{cat:"assembly",name:"TV unit",price:30,standard:35,unit:"per item"},
+{cat:"assembly",name:"Coffee table",price:17,standard:20,unit:"per item"},
+{cat:"assembly",name:"Dining table",price:34,standard:40,unit:"per item"},
+{cat:"assembly",name:"Dining chair",price:10,standard:12,unit:"per chair"},
+{cat:"assembly",name:"Standard bed frame",price:38,standard:45,unit:"per item"},
+{cat:"assembly",name:"Ottoman storage bed",price:64,standard:75,unit:"per item"},
+{cat:"assembly",name:"Bunk bed",price:77,standard:90,unit:"per item"},
+{cat:"assembly",name:"Sofa bed",price:38,standard:45,unit:"per item"},
+{cat:"assembly",name:"Shoe cabinet",price:21,standard:25,unit:"per item"},
+{cat:"assembly",name:"Storage unit",price:26,standard:30,unit:"per item"},
+{cat:"assembly",name:"Secure one item of furniture to wall",price:13,standard:15,unit:"per item"}
+];
+let activeFilter="all",basket={};
+const money=n=>new Intl.NumberFormat("en-GB",{style:"currency",currency:"GBP",maximumFractionDigits:0}).format(n);
+const catalogue=document.getElementById("catalogue");
+function renderJobs(){
+ const q=document.getElementById("search").value.trim().toLowerCase();
+ const visible=jobs.map((j,i)=>({...j,id:i})).filter(j=>(activeFilter==="all"||j.cat===activeFilter)&&j.name.toLowerCase().includes(q));
+ catalogue.innerHTML="";
+ if(!visible.length){catalogue.innerHTML='<div class="empty">No jobs found. Try another search or <a href="#contact"><u>message us</u></a> about your job.</div>';return}
+ visible.forEach(j=>{
+  const card=document.createElement("article");card.className="job";
+  const top=document.createElement("div");top.className="job-top";
+  const title=document.createElement("div");const h=document.createElement("h3");h.textContent=j.name;const type=document.createElement("div");type.className="type";type.textContent=j.cat==="mount"?"Mounting & fitting":"Furniture assembly";title.append(h,type);
+  const price=document.createElement("div");price.className="job-price";price.innerHTML='<small>'+money(j.standard)+'</small>'+money(j.price);
+  top.append(title,price);
+  const bottom=document.createElement("div");bottom.className="job-bottom";const unit=document.createElement("span");unit.className="job-unit";unit.textContent=j.unit;
+  const add=document.createElement("button");add.className="add-btn";add.textContent=basket[j.id]?"Add another +":"＋ Add";add.addEventListener("click",()=>{basket[j.id]=(basket[j.id]||0)+1;updateBasket();renderJobs()});
+  bottom.append(unit,add);card.append(top,bottom);catalogue.append(card);
+ });
+}
+function totals(){let count=0,total=0;Object.entries(basket).forEach(([id,qty])=>{count+=qty;total+=jobs[Number(id)].price*qty});return{count,total}}
+function updateBasket(){
+ const {count,total}=totals();document.getElementById("top-count").textContent=count;document.getElementById("bottom-count").textContent=count;document.getElementById("bottom-total").textContent=money(total);document.getElementById("bottom-bar").hidden=count===0;document.getElementById("send-booking").disabled=count===0;
+ const box=document.getElementById("basket-content");
+ if(!count){box.innerHTML='<div class="basket-empty"><b>Your basket is empty</b>Choose a job from the list and tap Add. You can combine as many different jobs as you need.</div>';return}
+ box.innerHTML='<div class="basket-list" id="basket-list"></div><div class="basket-summary"><span>'+count+' job item'+(count===1?"":"s")+' in total</span><strong>'+money(total)+'</strong></div>';
+ const list=box.querySelector("#basket-list");
+ Object.entries(basket).forEach(([id,qty])=>{
+  const j=jobs[Number(id)],line=document.createElement("div");line.className="basket-line";
+  const left=document.createElement("div"),name=document.createElement("strong");name.textContent=j.name;const meta=document.createElement("small");meta.textContent=money(j.price)+" each · "+j.unit;const controls=document.createElement("div");controls.className="line-controls";
+  const minus=document.createElement("button");minus.textContent="−";minus.setAttribute("aria-label","Remove one "+j.name);minus.onclick=()=>{if(basket[id]>1)basket[id]--;else delete basket[id];updateBasket();renderJobs()};
+  const n=document.createElement("b");n.style.fontSize="11px";n.textContent=qty;
+  const plus=document.createElement("button");plus.textContent="+";plus.setAttribute("aria-label","Add one "+j.name);plus.onclick=()=>{basket[id]++;updateBasket();renderJobs()};
+  const remove=document.createElement("button");remove.className="remove";remove.textContent="Remove";remove.onclick=()=>{delete basket[id];updateBasket();renderJobs()};
+  controls.append(minus,n,plus,remove);left.append(name,meta,controls);
+  const lineTotal=document.createElement("div");lineTotal.className="line-total";lineTotal.textContent=money(j.price*qty);line.append(left,lineTotal);list.append(line);
+ });
+}
+function openBasket(){document.getElementById("overlay").classList.add("open");document.getElementById("overlay").setAttribute("aria-hidden","false");document.body.style.overflow="hidden"}
+function closeBasket(){document.getElementById("overlay").classList.remove("open");document.getElementById("overlay").setAttribute("aria-hidden","true");document.body.style.overflow=""}
+document.getElementById("filters").addEventListener("click",e=>{const b=e.target.closest("[data-filter]");if(!b)return;activeFilter=b.dataset.filter;document.querySelectorAll(".filter").forEach(x=>x.classList.toggle("active",x===b));renderJobs()});
+document.getElementById("search").addEventListener("input",renderJobs);
+["open-basket","view-basket"].forEach(id=>document.getElementById(id).addEventListener("click",openBasket));
+document.getElementById("close-basket").addEventListener("click",closeBasket);
+document.getElementById("overlay").addEventListener("click",e=>{if(e.target.id==="overlay")closeBasket()});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeBasket()});
+document.getElementById("booking-form").addEventListener("submit",e=>{
+ e.preventDefault();const {count,total}=totals();if(!count)return;
+ const f=new FormData(e.currentTarget),lines=Object.entries(basket).map(([id,qty])=>{const j=jobs[Number(id)];return qty+" × "+j.name+" — "+money(j.price*qty)}).join("\n");
+ const msg=["Hi Fox Fix & Finish, I'd like to request a booking for these jobs:","",lines,"","Estimated total: "+money(total),"","Name: "+f.get("name"),"Postcode / area: "+f.get("postcode"),"Preferred date: "+(f.get("date")||"Flexible"),"Extra details: "+(f.get("notes")||"None"),"","Please let me know your availability and confirm the booking."].join("\n");
+ window.open("https://wa.me/"+PHONE+"?text="+encodeURIComponent(msg),"_blank","noopener");
+});
+const dateInput=document.getElementById("customer-date");const today=new Date();dateInput.min=new Date(today.getTime()-today.getTimezoneOffset()*60000).toISOString().slice(0,10);
+renderJobs();updateBasket();
+</script>
+</body>
+</html>
