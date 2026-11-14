@@ -298,10 +298,10 @@ footer{background:#fffaf5!important;padding:28px 18px!important;line-height:1.9!
 
 
 
-/* ===== Sophisticated branded header refresh ===== */
+/* ===== Header logo fit refinement ===== */
 .site-header{
- height:132px!important;
- padding:12px 24px!important;
+ height:174px!important;
+ padding:8px 24px!important;
  background:
    radial-gradient(ellipse at 50% 0%,rgba(255,239,222,.78),transparent 48%),
    linear-gradient(180deg,#fffdfa 0%,#fff 100%)!important;
@@ -310,8 +310,7 @@ footer{background:#fffaf5!important;padding:28px 18px!important;line-height:1.9!
  isolation:isolate;
 }
 .site-header:before{
- content:"";
- position:absolute;left:0;right:0;top:0;height:3px;
+ content:"";position:absolute;left:0;right:0;top:0;height:3px;
  background:linear-gradient(90deg,#d65e13 0%,#f7a45d 28%,#f7c99f 50%,#f7a45d 72%,#d65e13 100%);
 }
 .site-header:after{
@@ -320,35 +319,31 @@ footer{background:#fffaf5!important;padding:28px 18px!important;line-height:1.9!
  top:50%;transform:translateY(-50%);
  color:#9a8b7b;font-size:9px;font-weight:800;letter-spacing:1.65px;
 }
-.brand-centred{
- width:min(390px,calc(100% - 230px))!important;
- height:116px!important;
- padding:7px 28px!important;
- border-radius:24px;
- background:radial-gradient(ellipse at center,rgba(255,241,226,.82),rgba(255,250,245,.26) 68%,transparent 74%);
- filter:drop-shadow(0 5px 10px rgba(70,43,18,.06));
+.site-header .brand-centred{
+ display:flex!important;align-items:center!important;justify-content:center!important;
+ width:260px!important;height:164px!important;
+ padding:0!important;margin:0!important;flex:0 0 auto;
+ background:none!important;border-radius:0!important;filter:none!important;
 }
-.brand-centred img{
- transform:scale(1.04);
- transition:transform .28s ease,filter .28s ease;
+.site-header .brand-centred img{
+ display:block!important;width:100%!important;height:100%!important;
+ max-width:100%!important;max-height:100%!important;
+ object-fit:contain!important;object-position:center!important;
+ aspect-ratio:3/2;transform:none!important;
  filter:drop-shadow(0 4px 5px rgba(49,33,19,.10));
 }
-.brand-centred:hover img{transform:scale(1.075)}
+.site-header .brand-centred:hover img{transform:none!important}
 .site-header .basket-top{
  right:max(28px,calc((100% - 1120px)/2))!important;
- top:50%!important;
- transform:translateY(-50%)!important;
- min-height:47px;
- padding:10px 15px 10px 17px!important;
- border:1px solid #39332c!important;
- border-radius:13px!important;
+ top:50%!important;transform:translateY(-50%)!important;
+ min-height:47px;padding:10px 15px 10px 17px!important;
+ border:1px solid #39332c!important;border-radius:13px!important;
  background:linear-gradient(145deg,#34302b,#211f1c)!important;
  box-shadow:0 8px 20px rgba(35,29,23,.17),inset 0 1px rgba(255,255,255,.12)!important;
- letter-spacing:.15px;
- transition:transform .2s ease,box-shadow .2s ease,background .2s ease;
+ letter-spacing:.15px;transition:box-shadow .2s ease,background .2s ease;
 }
 .site-header .basket-top:hover{
- transform:translateY(calc(-50% - 2px))!important;
+ transform:translateY(-50%)!important;
  box-shadow:0 12px 25px rgba(35,29,23,.22)!important;
  background:linear-gradient(145deg,#413a32,#26221e)!important;
 }
@@ -357,19 +352,16 @@ footer{background:#fffaf5!important;padding:28px 18px!important;line-height:1.9!
  box-shadow:0 2px 6px rgba(0,0,0,.18);
 }
 @media(max-width:760px){
- .site-header{height:116px!important;padding:8px 12px!important}
- .site-header:after{content:"FOX FIX & FINISH";left:14px;top:auto;bottom:8px;transform:none;font-size:7px;letter-spacing:1.15px}
- .brand-centred{width:min(300px,calc(100% - 105px))!important;height:104px!important;padding:5px 8px!important}
- .brand-centred img{transform:scale(1.02)}
- .brand-centred:hover img{transform:scale(1.02)}
+ .site-header{height:142px!important;padding:6px 10px!important}
+ .site-header:after{content:"FOX FIX & FINISH";left:14px;top:auto;bottom:7px;transform:none;font-size:7px;letter-spacing:1.15px}
+ .site-header .brand-centred{width:210px!important;height:132px!important}
  .site-header .basket-top{right:12px!important;top:50%!important;min-height:40px;padding:8px 10px!important;border-radius:11px!important}
 }
 @media(max-width:380px){
- .site-header{height:108px!important}
- .brand-centred{width:calc(100% - 94px)!important;height:96px!important}
+ .site-header{height:132px!important}
+ .site-header .brand-centred{width:190px!important;height:122px!important}
  .site-header .basket-top{right:8px!important;padding:7px 8px!important}
 }
-
 </style>
 </head>
 <body>
@@ -416,7 +408,7 @@ footer{background:#fffaf5!important;padding:28px 18px!important;line-height:1.9!
     <a class="contact" href="https://wa.me/447301630675?text=Hi%20Fox%20Fix%20%26%20Finish%2C%20I'd%20like%20a%20quote%20for%20a%20job%20not%20listed%20on%20your%20website." target="_blank" rel="noopener">Get a free quote ↗</a>
    </article>
   </div>
-  <div class="promo-note"><strong>Standard fixed pricing:</strong> The prices shown are our normal rates, with no promotional discounts applied. Travel is included in our normal service area. Materials and parts are extra and agreed before work begins.</div>
+  <div class="promo-note"><strong>Standard fixed pricing:</strong> The prices shown are our normal rates, with no standard discounts applied. Travel is included in our normal service area. Materials and parts are extra and agreed before work begins.</div>
  </section>
 </main>
 <footer id="how"><strong>Fox Fix & Finish Property Maintenance</strong> · Reliable · Professional · Affordable<br>Call or WhatsApp <strong>07301 630675</strong> · Booking requests are confirmed personally.</footer>
@@ -461,60 +453,60 @@ footer{background:#fffaf5!important;padding:28px 18px!important;line-height:1.9!
 <script>
 const PHONE="447301630675";
 const jobs=[
-{cat:"mount",name:"TV up to 32 inches",price:34,standard:40,unit:"per TV"},
-{cat:"mount",name:"TV 33–43 inches",price:43,standard:50,unit:"per TV"},
-{cat:"mount",name:"TV 44–55 inches",price:51,standard:60,unit:"per TV"},
-{cat:"mount",name:"TV 56–65 inches",price:60,standard:70,unit:"per TV"},
-{cat:"mount",name:"TV 66–75 inches",price:72,standard:85,unit:"per TV"},
-{cat:"mount",name:"Full-motion bracket fitting add-on",price:13,standard:15,unit:"per TV"},
-{cat:"mount",name:"Cable trunking (up to 2 metres)",price:17,standard:20,unit:"per installation"},
-{cat:"mount",name:"Hang 1 picture or frame",price:10,standard:12,unit:"per item"},
-{cat:"mount",name:"Hang 3 pictures or frames",price:21,standard:25,unit:"for 3"},
-{cat:"mount",name:"Hang 5 pictures or frames",price:30,standard:35,unit:"for 5"},
-{cat:"mount",name:"Hang 10 pictures or frames",price:51,standard:60,unit:"for 10"},
-{cat:"mount",name:"Hang small mirror",price:17,standard:20,unit:"per mirror"},
-{cat:"mount",name:"Hang large / heavy mirror",price:26,standard:30,unit:"per mirror"},
-{cat:"mount",name:"Install 1 floating shelf",price:17,standard:20,unit:"per shelf"},
-{cat:"mount",name:"Install 2 floating shelves",price:30,standard:35,unit:"for 2"},
-{cat:"mount",name:"Install 3 floating shelves",price:43,standard:50,unit:"for 3"},
-{cat:"mount",name:"Install coat hooks / key holder",price:13,standard:15,unit:"per item"},
-{cat:"mount",name:"Install wall clock",price:10,standard:12,unit:"per clock"},
-{cat:"mount",name:"Install wall-mounted coat rack",price:17,standard:20,unit:"per item"},
-{cat:"mount",name:"Install bathroom accessory",price:15,standard:18,unit:"per item"},
-{cat:"mount",name:"Install curtain pole",price:26,standard:30,unit:"per pole"},
-{cat:"mount",name:"Install curtain track",price:30,standard:35,unit:"per track"},
-{cat:"mount",name:"Replace existing curtain pole",price:26,standard:30,unit:"per pole"},
-{cat:"mount",name:"Install 1 roller blind",price:26,standard:30,unit:"per blind"},
-{cat:"mount",name:"Install 2 roller blinds",price:47,standard:55,unit:"for 2"},
-{cat:"mount",name:"Install 4 roller blinds",price:81,standard:95,unit:"for 4"},
-{cat:"mount",name:"Install wooden Venetian blind",price:30,standard:35,unit:"per blind"},
-{cat:"mount",name:"Install vertical blind",price:30,standard:35,unit:"per blind"},
-{cat:"mount",name:"Install Roman blind",price:30,standard:35,unit:"per blind"},
-{cat:"mount",name:"Install bay-window curtain pole",price:55,standard:65,unit:"per pole"},
-{cat:"mount",name:"Remove existing blind or pole",price:10,standard:12,unit:"per item"},
-{cat:"mount",name:"Install curtain tiebacks (pair)",price:17,standard:20,unit:"per pair"},
-{cat:"mount",name:"Install curtain holdbacks (pair)",price:17,standard:20,unit:"per pair"},
-{cat:"assembly",name:"Bedside table",price:17,standard:20,unit:"per item"},
-{cat:"assembly",name:"Small desk",price:26,standard:30,unit:"per item"},
-{cat:"assembly",name:"Large office desk",price:38,standard:45,unit:"per item"},
-{cat:"assembly",name:"Gaming desk",price:38,standard:45,unit:"per item"},
-{cat:"assembly",name:"Chest of drawers (up to 6 drawers)",price:34,standard:40,unit:"per item"},
-{cat:"assembly",name:"2-door wardrobe",price:55,standard:65,unit:"per item"},
-{cat:"assembly",name:"3-door wardrobe",price:72,standard:85,unit:"per item"},
-{cat:"assembly",name:"4-door wardrobe",price:94,standard:110,unit:"per item"},
-{cat:"assembly",name:"Sliding-door wardrobe",price:102,standard:120,unit:"per item"},
-{cat:"assembly",name:"Bookcase",price:26,standard:30,unit:"per item"},
-{cat:"assembly",name:"TV unit",price:30,standard:35,unit:"per item"},
-{cat:"assembly",name:"Coffee table",price:17,standard:20,unit:"per item"},
-{cat:"assembly",name:"Dining table",price:34,standard:40,unit:"per item"},
-{cat:"assembly",name:"Dining chair",price:10,standard:12,unit:"per chair"},
-{cat:"assembly",name:"Standard bed frame",price:38,standard:45,unit:"per item"},
-{cat:"assembly",name:"Ottoman storage bed",price:64,standard:75,unit:"per item"},
-{cat:"assembly",name:"Bunk bed",price:77,standard:90,unit:"per item"},
-{cat:"assembly",name:"Sofa bed",price:38,standard:45,unit:"per item"},
-{cat:"assembly",name:"Shoe cabinet",price:21,standard:25,unit:"per item"},
-{cat:"assembly",name:"Storage unit",price:26,standard:30,unit:"per item"},
-{cat:"assembly",name:"Secure one item of furniture to wall",price:13,standard:15,unit:"per item"}
+{cat:"mount",name:"TV up to 32 inches",price:40,standard:40,unit:"per TV"},
+{cat:"mount",name:"TV 33–43 inches",price:50,standard:50,unit:"per TV"},
+{cat:"mount",name:"TV 44–55 inches",price:60,standard:60,unit:"per TV"},
+{cat:"mount",name:"TV 56–65 inches",price:70,standard:70,unit:"per TV"},
+{cat:"mount",name:"TV 66–75 inches",price:85,standard:85,unit:"per TV"},
+{cat:"mount",name:"Full-motion bracket fitting add-on",price:15,standard:15,unit:"per TV"},
+{cat:"mount",name:"Cable trunking (up to 2 metres)",price:20,standard:20,unit:"per installation"},
+{cat:"mount",name:"Hang 1 picture or frame",price:12,standard:12,unit:"per item"},
+{cat:"mount",name:"Hang 3 pictures or frames",price:25,standard:25,unit:"for 3"},
+{cat:"mount",name:"Hang 5 pictures or frames",price:35,standard:35,unit:"for 5"},
+{cat:"mount",name:"Hang 10 pictures or frames",price:60,standard:60,unit:"for 10"},
+{cat:"mount",name:"Hang small mirror",price:20,standard:20,unit:"per mirror"},
+{cat:"mount",name:"Hang large / heavy mirror",price:30,standard:30,unit:"per mirror"},
+{cat:"mount",name:"Install 1 floating shelf",price:20,standard:20,unit:"per shelf"},
+{cat:"mount",name:"Install 2 floating shelves",price:35,standard:35,unit:"for 2"},
+{cat:"mount",name:"Install 3 floating shelves",price:50,standard:50,unit:"for 3"},
+{cat:"mount",name:"Install coat hooks / key holder",price:15,standard:15,unit:"per item"},
+{cat:"mount",name:"Install wall clock",price:12,standard:12,unit:"per clock"},
+{cat:"mount",name:"Install wall-mounted coat rack",price:20,standard:20,unit:"per item"},
+{cat:"mount",name:"Install bathroom accessory",price:18,standard:18,unit:"per item"},
+{cat:"mount",name:"Install curtain pole",price:30,standard:30,unit:"per pole"},
+{cat:"mount",name:"Install curtain track",price:35,standard:35,unit:"per track"},
+{cat:"mount",name:"Replace existing curtain pole",price:30,standard:30,unit:"per pole"},
+{cat:"mount",name:"Install 1 roller blind",price:30,standard:30,unit:"per blind"},
+{cat:"mount",name:"Install 2 roller blinds",price:55,standard:55,unit:"for 2"},
+{cat:"mount",name:"Install 4 roller blinds",price:95,standard:95,unit:"for 4"},
+{cat:"mount",name:"Install wooden Venetian blind",price:35,standard:35,unit:"per blind"},
+{cat:"mount",name:"Install vertical blind",price:35,standard:35,unit:"per blind"},
+{cat:"mount",name:"Install Roman blind",price:35,standard:35,unit:"per blind"},
+{cat:"mount",name:"Install bay-window curtain pole",price:65,standard:65,unit:"per pole"},
+{cat:"mount",name:"Remove existing blind or pole",price:12,standard:12,unit:"per item"},
+{cat:"mount",name:"Install curtain tiebacks (pair)",price:20,standard:20,unit:"per pair"},
+{cat:"mount",name:"Install curtain holdbacks (pair)",price:20,standard:20,unit:"per pair"},
+{cat:"assembly",name:"Bedside table",price:20,standard:20,unit:"per item"},
+{cat:"assembly",name:"Small desk",price:30,standard:30,unit:"per item"},
+{cat:"assembly",name:"Large office desk",price:45,standard:45,unit:"per item"},
+{cat:"assembly",name:"Gaming desk",price:45,standard:45,unit:"per item"},
+{cat:"assembly",name:"Chest of drawers (up to 6 drawers)",price:40,standard:40,unit:"per item"},
+{cat:"assembly",name:"2-door wardrobe",price:65,standard:65,unit:"per item"},
+{cat:"assembly",name:"3-door wardrobe",price:85,standard:85,unit:"per item"},
+{cat:"assembly",name:"4-door wardrobe",price:110,standard:110,unit:"per item"},
+{cat:"assembly",name:"Sliding-door wardrobe",price:120,standard:120,unit:"per item"},
+{cat:"assembly",name:"Bookcase",price:30,standard:30,unit:"per item"},
+{cat:"assembly",name:"TV unit",price:35,standard:35,unit:"per item"},
+{cat:"assembly",name:"Coffee table",price:20,standard:20,unit:"per item"},
+{cat:"assembly",name:"Dining table",price:40,standard:40,unit:"per item"},
+{cat:"assembly",name:"Dining chair",price:12,standard:12,unit:"per chair"},
+{cat:"assembly",name:"Standard bed frame",price:45,standard:45,unit:"per item"},
+{cat:"assembly",name:"Ottoman storage bed",price:75,standard:75,unit:"per item"},
+{cat:"assembly",name:"Bunk bed",price:90,standard:90,unit:"per item"},
+{cat:"assembly",name:"Sofa bed",price:45,standard:45,unit:"per item"},
+{cat:"assembly",name:"Shoe cabinet",price:25,standard:25,unit:"per item"},
+{cat:"assembly",name:"Storage unit",price:30,standard:30,unit:"per item"},
+{cat:"assembly",name:"Secure one item of furniture to wall",price:15,standard:15,unit:"per item"}
 ];
 let basket={};
 const money=n=>new Intl.NumberFormat("en-GB",{style:"currency",currency:"GBP",maximumFractionDigits:0}).format(n);
