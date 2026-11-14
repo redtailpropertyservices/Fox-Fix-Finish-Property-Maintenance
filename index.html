@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#fffaf5">
+<meta name="description" content="Fox Fix & Finish Property Maintenance. Reliable, professional and affordable small-job handyman services across Oxfordshire.">
+<title>Fox Fix & Finish | Small Jobs, Done Right</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="header">
+  <a class="brand" href="#home"><img src="assets/fox-fix-finish-logo.png" alt="Fox Fix & Finish Property Maintenance logo"></a>
+  <button class="menu" aria-label="Toggle navigation" aria-expanded="false">☰</button>
+  <nav class="nav"><a class="active" href="#home">Home</a><a href="#services">Services</a><a href="#prices">Prices</a><a href="#booking">Book a job</a><a href="#about">About</a><a href="#contact">Contact</a></nav>
+  <a class="header-cta" href="#booking">Book a job <span>→</span></a>
+</header>
+
+<main>
+<section class="hero" id="home">
+  <div class="hero-copy">
+    <div class="eyebrow"><span></span> PROPERTY MAINTENANCE & HANDYMAN SERVICES</div>
+    <h1>Small jobs,<br><em>done right.</em></h1>
+    <p>Reliable, professional and affordable help for the jobs around your home that you never quite get round to.</p>
+    <div class="trust-points"><span>✓ Reliable</span><i></i><span>✓ Professional</span><i></i><span>✓ Affordable</span></div>
+    <div class="hero-actions"><a class="btn primary" href="#booking">Book a fixed-price job <b>→</b></a><a class="btn secondary" href="#contact">Get a free quote</a></div>
+    <small class="service-note">Proudly serving Oxfordshire and surrounding areas · Local travel included</small>
+  </div>
+  <div class="hero-photo" role="img" aria-label="Warm, welcoming modern living room with orange accents"><div class="photo-tag"><b>THE SMALL JOB SPECIALISTS</b><span>Making home life that little bit easier</span></div></div>
+</section>
+
+<section class="service-shortcuts" id="services">
+  <a href="#booking" data-job="TV & wall mounting"><span class="service-icon">▣</span><b>TV & wall mounting</b><small>Brackets, shelves, mirrors</small></a>
+  <a href="#booking" data-job="Flat-pack assembly"><span class="service-icon">⚒</span><b>Flat-pack assembly</b><small>Beds, desks, wardrobes</small></a>
+  <a href="#booking" data-job="Painting & decorating"><span class="service-icon">▰</span><b>Painting & decorating</b><small>Freshen up your space</small></a>
+  <a href="#booking" data-job="Blinds & curtains"><span class="service-icon">▤</span><b>Blinds & curtains</b><small>Poles, rails and blinds</small></a>
+  <a href="#booking" data-job="General repairs"><span class="service-icon">⌂</span><b>General repairs</b><small>Those little jobs</small></a>
+  <a href="#booking" data-job="Other small jobs"><span class="service-icon">＋</span><b>Other small jobs</b><small>Tell us what you need</small></a>
+</section>
+
+<section class="booking-layout" id="booking">
+  <div class="booking-panel">
+    <div class="panel-heading"><div class="heading-icon">▦</div><div><span class="eyebrow">SIMPLE, STRAIGHTFORWARD BOOKING</span><h2>Book a fixed-price job</h2><p>Choose your job, select a preferred date and send your booking request.</p></div></div>
+    <div class="booking-steps"><span class="current">1 <small>Choose job</small></span><i></i><span>2 <small>Your details</small></span><i></i><span>3 <small>Request booking</small></span></div>
+    <form id="booking-form">
+      <div class="form-grid">
+        <label class="full">What do you need help with?
+          <select id="job" name="job" required><option value="">Choose a job</option><option>TV & wall mounting</option><option>Flat-pack assembly</option><option>Curtain pole installation</option><option>Roller blind installation</option><option>Other blinds & fittings</option><option>Painting & decorating</option><option>General repairs</option><option>Multiple jobs / bundle</option><option>Other small jobs</option></select>
+        </label>
+        <label>Job size / item<select name="size"><option>Not sure yet</option><option>One item</option><option>Two items</option><option>Three or more items</option><option>Large / complex job</option></select></label>
+        <label>Preferred date<input name="date" type="date" id="date" required></label>
+        <label>Your name<input name="name" autocomplete="name" placeholder="Full name" required></label>
+        <label>Postcode / area<input name="area" autocomplete="postal-code" placeholder="e.g. OX11 / Didcot" required></label>
+        <label class="full">A few details about the job<textarea name="details" rows="3" placeholder="Tell us what needs doing. You can send photos in WhatsApp afterwards."></textarea></label>
+      </div>
+      <div class="booking-footer"><div><small>YOUR PRICE</small><strong id="price-display">Choose a job</strong><small id="price-note">We'll confirm the exact price before your booking is accepted.</small></div><button class="btn primary" type="submit">Continue to WhatsApp <b>→</b></button></div>
+    </form>
+  </div>
+  <aside class="side-panels">
+    <div class="info-card area-card"><span class="side-icon">⌖</span><div><h3>Our service area</h3><b>Oxfordshire & surrounding areas</b><p>Including Didcot, Wallingford, Oxford, Abingdon and nearby towns.</p></div></div>
+    <div class="info-card why-card"><span class="side-icon">✦</span><div><h3>Why choose Fox Fix & Finish?</h3><ul><li>Clear, upfront pricing</li><li>Friendly, reliable service</li><li>Care taken in your home</li><li>Free, no-obligation quotes</li><li>Local travel included</li></ul></div></div>
+  </aside>
+</section>
+
+<section class="prices-section" id="prices"><div class="section-title"><span class="eyebrow">NO NASTY SURPRISES</span><h2>Clear prices. <em>Simple choices.</em></h2><p>Popular small jobs with straightforward starting prices. We'll confirm the exact price once we've checked the details.</p></div>
+<div class="price-cards">
+  <article><span class="pill">WALL MOUNTING</span><h3>TV wall mounting</h3><strong>From £65</strong><p>TV bracket fitting and secure installation. Price depends on TV size, wall type and bracket.</p><a href="#booking" data-job="TV & wall mounting">Book this job →</a></article>
+  <article><span class="pill">FURNITURE</span><h3>Flat-pack assembly</h3><strong>From £35</strong><p>Desks, bedside tables, drawers and larger furniture. Select the item and size when requesting.</p><a href="#booking" data-job="Flat-pack assembly">Book this job →</a></article>
+  <article><span class="pill">WINDOW FITTINGS</span><h3>Curtain pole fitting</h3><strong>From £25</strong><p>Installation of a customer-supplied curtain pole in a suitable fixing surface.</p><a href="#booking" data-job="Curtain pole installation">Book this job →</a></article>
+  <article><span class="pill">WINDOW FITTINGS</span><h3>Roller blind fitting</h3><strong>From £25</strong><p>Price per blind for standard installation. Multiple blinds can be quoted together.</p><a href="#booking" data-job="Roller blind installation">Book this job →</a></article>
+</div><p class="price-disclaimer">These are draft example prices for the website preview and must be checked against your approved price list before publishing. Materials, specialist fixings and non-standard work may cost extra. No payment is taken on this website.</p></section>
+
+<section class="about" id="about"><div class="about-mark">FOX<br><b>FIX & FINISH</b><small>PROPERTY MAINTENANCE</small></div><div><span class="eyebrow">A FRIENDLY LOCAL HAND</span><h2>Good work, <em>without the fuss.</em></h2><p>From mounting a TV to building a wardrobe or ticking off a list of little repairs, Fox Fix & Finish is here to make looking after your home easier. Expect a friendly approach, tidy work and clear communication from first message to finished job.</p><a class="text-link" href="#contact">Have a different job in mind? Get in touch →</a></div></section>
+
+<section class="contact" id="contact"><div><span class="eyebrow">LET'S GET IT SORTED</span><h2>Got a job in mind?</h2><p>For larger, unusual or multi-job requests, send us a few details and we'll provide a free, no-obligation quote.</p><a href="tel:07301630675">☎ &nbsp;07301 630675</a><a href="https://wa.me/447301630675" target="_blank" rel="noopener">◉ &nbsp;WhatsApp us</a></div><form id="quote-form"><label>Your name<input name="name" required placeholder="Your name"></label><label>What needs doing?<textarea name="details" required rows="4" placeholder="Tell us about the job..."></textarea></label><label>Your area / postcode<input name="area" placeholder="e.g. OX10"></label><button class="btn primary" type="submit">Request my free quote →</button><small>Opens WhatsApp with your message ready to send.</small></form></section>
+</main>
+<footer><a class="brand footer-brand" href="#home"><img src="assets/fox-fix-finish-logo.png" alt="Fox Fix & Finish logo"></a><p>Reliable · Professional · Affordable</p><small>© <span id="year"></span> Fox Fix & Finish Property Maintenance</small></footer>
+<script src="script.js"></script>
+</body></html>
