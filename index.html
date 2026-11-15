@@ -374,6 +374,11 @@ footer{background:#fffaf5!important;padding:28px 18px!important;line-height:1.9!
 .product-price-preview strong{display:block;font:800 23px Manrope;color:var(--orange-dark);margin-top:3px}
 .product-link-fields select,.product-link-fields input{width:100%;border:1px solid #e5d9cc;border-radius:9px;padding:12px;background:white;font-size:12px}
 @media(max-width:600px){.product-price-preview{font-size:11px}}
+
+.product-detected-card{margin:12px 0;padding:12px;border:1px solid var(--line);border-radius:10px;background:#fff;display:flex;gap:12px;align-items:center}
+.product-detected-card[hidden]{display:none}.product-detected-card img{width:76px;height:76px;object-fit:contain;border-radius:8px;background:#faf7f2}
+.product-detected-card strong{display:block;font:800 12px Manrope;margin-bottom:5px}.product-detected-card small{display:block;color:var(--muted);font-size:10px;line-height:1.5}
+.product-price-preview strong{display:block;font:800 24px Manrope;color:var(--orange-dark);margin-top:5px}
 </style>
 </head>
 <body>
@@ -421,13 +426,15 @@ footer{background:#fffaf5!important;padding:28px 18px!important;line-height:1.9!
    </article>
   </div>
   <section class="product-link-card" id="product-link-quote" aria-labelledby="product-link-heading">
-   <div class="product-link-copy"><div class="eyebrow">FOUND YOUR FURNITURE ONLINE?</div><h3 id="product-link-heading">Paste your product link</h3><p>Paste the product link, choose the closest furniture type and see your assembly price instantly. The link stays attached to your basket so we can check the exact item.</p><div class="retailer-chips"><span>IKEA</span><span>Amazon</span><span>Wayfair</span><span>Argos</span><span>Other retailers</span></div></div>
+   <div class="product-link-copy"><div class="eyebrow">FOUND YOUR FURNITURE ONLINE?</div><h3 id="product-link-heading">Get an instant assembly estimate</h3><p>Paste the product link. We’ll read the product details, identify the furniture and calculate an assembly estimate using our standard rates. No category guessing.</p><div class="retailer-chips"><span>IKEA</span><span>Amazon</span><span>Wayfair</span><span>Argos</span><span>Other retailers</span></div></div>
    <form id="product-link-form" class="product-link-form">
-    <label for="product-url">Product page link</label><input id="product-url" type="url" placeholder="https://www.ikea.com/gb/en/p/..." required>
-    <div class="product-link-fields"><div><label for="product-type">Choose the closest furniture type</label><select id="product-type" required><option value="">Choose furniture type…</option><option value="20">Bedside table — £20</option><option value="30">Small desk / bookcase / storage unit — £30</option><option value="35">TV unit — £35</option><option value="40">Chest of drawers (up to 6 drawers) / dining table — £40</option><option value="45">Large desk / standard bed frame / sofa bed — £45</option><option value="65">2-door wardrobe — £65</option><option value="75">Ottoman storage bed — £75</option><option value="85">3-door wardrobe — £85</option><option value="90">Bunk bed — £90</option><option value="110">4-door wardrobe — £110</option><option value="120">Sliding-door wardrobe — £120</option><option value="custom">Other / complex item — manual quote</option></select></div><div><label for="product-quantity">Quantity</label><input id="product-quantity" type="number" min="1" max="20" value="1" required></div></div><div class="product-price-preview" id="product-price-preview" aria-live="polite">Choose a furniture type to see your assembly price.</div>
-    <label for="product-details">Product name, size or anything else (optional)</label><textarea id="product-details" rows="2" placeholder="e.g. IKEA PAX 2-door wardrobe, 201cm high"></textarea>
-    <button class="product-link-submit" type="submit">Add item and price to basket ↗</button>
-    <p class="product-link-note" id="product-link-feedback" aria-live="polite">Choose a matching item to see an instant assembly price. Complex or unlisted items need a quick manual quote. No payment is taken online.</p>
+    <label for="product-url">Paste the product page link</label><input id="product-url" type="url" placeholder="https://www.ikea.com/gb/en/p/..." required>
+    <div class="product-link-fields"><div><label for="product-quantity">Quantity</label><input id="product-quantity" type="number" min="1" max="20" value="1" required></div></div>
+    <div class="product-price-preview" id="product-price-preview" aria-live="polite">Paste a product link and we’ll identify the item automatically.</div>
+    <div id="product-detected-card" class="product-detected-card" hidden></div>
+    <label for="product-details">Anything else we should know? (optional)</label><textarea id="product-details" rows="2" placeholder="Optional notes about the item or installation location"></textarea>
+    <button class="product-link-submit" id="product-link-submit" type="submit">Identify item and calculate price ↗</button>
+    <p class="product-link-note" id="product-link-feedback" aria-live="polite">If the retailer blocks access or the item details are unclear, we’ll ask for a manual quote instead of guessing. No payment is taken online.</p>
    </form>
   </section>
   <div class="promo-note"><strong>Standard fixed pricing:</strong> The prices shown are our normal rates, with no standard discounts applied. Travel is included in our normal service area. Materials and parts are extra and agreed before work begins.</div>
@@ -583,11 +590,13 @@ function updateBasket(){
  });
  productQuoteItems.forEach((item,index)=>{
   const line=document.createElement("div");line.className="basket-line";
-  const left=document.createElement("div"),name=document.createElement("strong");name.textContent=item.qty+' × '+item.type;
+  const left=document.createElement("div"),name=document.createElement("strong");name.textContent=item.qty+' × '+(item.title||item.type);
+  const typeMeta=document.createElement('small');typeMeta.textContent=item.type;
+  
   const meta=document.createElement("small");meta.textContent=item.url+(item.details?' · '+item.details:'');
   const controls=document.createElement("div");controls.className="line-controls";
   const remove=document.createElement("button");remove.className="remove";remove.textContent="Remove";remove.onclick=()=>{productQuoteItems.splice(index,1);updateBasket()};
-  controls.append(remove);left.append(name,meta,controls);
+  controls.append(remove);left.append(name,typeMeta,meta,controls);
   const status=document.createElement("div");status.className="line-total";status.textContent=item.unitPrice===null?"Quote needed":money(item.unitPrice*item.qty);line.append(left,status);list.append(line);
  });
 }
@@ -610,7 +619,7 @@ contactRadios.forEach(r=>r.addEventListener("change",()=>{
 }));
 document.getElementById("booking-form").addEventListener("submit",e=>{
  e.preventDefault();const {count,total}=totals();if(!count)return;
- const f=new FormData(e.currentTarget),fixedLines=Object.entries(basket).map(([id,qty])=>{const j=jobs[Number(id)];return qty+" × "+j.name+" — "+money(j.price*qty)}).join("\n"),quoteLines=productQuoteItems.map(item=>item.qty+" × "+item.type+" — "+(item.unitPrice===null?"price to be confirmed":money(item.unitPrice*item.qty))+"\nProduct link: "+item.url+(item.details?"\nDetails: "+item.details:"")).join("\n\n"),lines=[fixedLines,quoteLines].filter(Boolean).join("\n\n");
+ const f=new FormData(e.currentTarget),fixedLines=Object.entries(basket).map(([id,qty])=>{const j=jobs[Number(id)];return qty+" × "+j.name+" — "+money(j.price*qty)}).join("\n"),quoteLines=productQuoteItems.map(item=>item.qty+" × "+item.title+" ("+item.type+") — "+(item.unitPrice===null?"price to be confirmed":money(item.unitPrice*item.qty))+"\nProduct link: "+item.url+(item.details?"\nDetails: "+item.details:"")).join("\n\n"),lines=[fixedLines,quoteLines].filter(Boolean).join("\n\n");
  const method=f.get("contact-method");
  const msg=["Hi Fox Fix & Finish, I'd like to request a booking for these jobs:","",lines,"","Fixed-price items subtotal: "+money(total),productQuoteItems.some(item=>item.unitPrice===null)?"Some furniture link items require a manual quote":"","Name: "+f.get("name"),"Phone: "+(f.get("phone")||"Not provided"),"Email: "+(f.get("email")||"Not provided"),"Postcode / area: "+f.get("postcode"),"Preferred date: "+(f.get("date")||"Flexible"),"Preferred contact: "+method,"Extra details: "+(f.get("notes")||"None"),"","Please let me know your availability and confirm the booking."].join("\n");
  const encoded=encodeURIComponent(msg);
@@ -626,28 +635,64 @@ document.getElementById("booking-form").addEventListener("submit",e=>{
   window.location.href="mailto:?subject="+encodeURIComponent("Fox Fix & Finish booking request")+"&body="+encoded;
  }
 });
-const productTypeSelect=document.getElementById("product-type");
 const productQtyInput=document.getElementById("product-quantity");
 const productPricePreview=document.getElementById("product-price-preview");
-function updateProductPricePreview(){
- const val=productTypeSelect.value,qty=Math.max(1,Math.min(20,Number(productQtyInput.value)||1));
- if(!val){productPricePreview.textContent="Choose a furniture type to see your assembly price.";return}
- if(val==="custom"){productPricePreview.innerHTML="This item needs a quick manual assessment. <strong>Price to be confirmed</strong>";return}
- const price=Number(val);
- productPricePreview.innerHTML="Your estimated fixed assembly price <strong>"+money(price*qty)+"</strong><span>"+money(price)+" per item × "+qty+". Based on the closest matching standard Fox Fix & Finish assembly rate.</span>";
-}
-productTypeSelect.addEventListener("change",updateProductPricePreview);
-productQtyInput.addEventListener("input",updateProductPricePreview);
-document.getElementById("product-link-form").addEventListener("submit",e=>{
- e.preventDefault();const urlField=document.getElementById("product-url"),type=productTypeSelect.value,qty=Math.max(1,Math.min(20,Number(productQtyInput.value)||1)),details=document.getElementById("product-details").value.trim(),feedback=document.getElementById("product-link-feedback");
- let url;try{url=new URL(urlField.value.trim())}catch{feedback.textContent="Please enter a complete product page link, starting with https://";return}
- if(!['http:','https:'].includes(url.protocol)){feedback.textContent="Please use a valid product page link.";return}
- if(!type){feedback.textContent="Please choose the closest furniture type.";return}
- const unitPrice=type==="custom"?null:Number(type);
- const label=productTypeSelect.options[productTypeSelect.selectedIndex].text.split(" — ")[0];
- productQuoteItems.push({url:url.href,type:label,qty,details,unitPrice});
- updateBasket();e.currentTarget.reset();productQtyInput.value="1";updateProductPricePreview();
- feedback.textContent=unitPrice===null?"Added to your basket for a manual quote.":"Added to your basket at "+money(unitPrice*qty)+". Your product link is attached.";
+const productFeedback=document.getElementById("product-link-feedback");
+const detectedCard=document.getElementById("product-detected-card");
+const productSubmit=document.getElementById("product-link-submit");
+const PRODUCT_RECOGNITION_ENDPOINT="https://bmgevnfomcyugvlgxmkd.supabase.co/functions/v1/recognise-furniture";
+let recognisedProduct=null;
+productQtyInput.addEventListener("input",()=>{
+ if(recognisedProduct) productPricePreview.innerHTML="Estimated assembly price <strong>"+money(recognisedProduct.unitPrice*Math.max(1,Math.min(20,Number(productQtyInput.value)||1)))+"</strong><span>"+money(recognisedProduct.unitPrice)+" per item × "+Math.max(1,Math.min(20,Number(productQtyInput.value)||1))+". Estimate based on the identified furniture type.</span>";
+});
+function safeText(value){return String(value??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+document.getElementById("product-link-form").addEventListener("submit",async e=>{
+ e.preventDefault();
+ const urlField=document.getElementById("product-url");
+ const qty=Math.max(1,Math.min(20,Number(productQtyInput.value)||1));
+ let url;
+ try{url=new URL(urlField.value.trim())}catch{productFeedback.textContent="Please enter a complete product link starting with https://";return}
+ if(url.protocol!=="https:"){productFeedback.textContent="Please use a secure https:// product link.";return}
+ recognisedProduct=null;detectedCard.hidden=true;
+ productSubmit.disabled=true;productSubmit.textContent="Reading product details…";
+ productFeedback.textContent="Checking the retailer page and identifying the furniture. This can take a few seconds.";
+ productPricePreview.textContent="Analysing product…";
+ try{
+  const response=await fetch(PRODUCT_RECOGNITION_ENDPOINT,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({url:url.href})});
+  const result=await response.json();
+  if(!response.ok)throw new Error(result.error||"We couldn't read that product page.");
+  if(!result.identified||!Number.isFinite(Number(result.unitPrice))){
+   productPricePreview.innerHTML="<strong>Price to be confirmed</strong><span>We couldn't identify the assembly type confidently enough to give you a reliable price.</span>";
+   productFeedback.textContent=result.message||"Please add the product to a manual quote. We’ll check the exact item before confirming a price.";
+   recognisedProduct={manual:true,url:url.href,title:result.title||"Furniture item",type:result.type||"Furniture — manual quote",qty,details:document.getElementById("product-details").value.trim(),unitPrice:null,image:result.image||""};
+   productSubmit.disabled=false;productSubmit.textContent="Add item for a manual quote ↗";
+   return;
+  }
+  recognisedProduct={manual:false,url:url.href,title:result.title,type:result.type,qty,details:document.getElementById("product-details").value.trim(),unitPrice:Number(result.unitPrice),image:result.image||"",confidence:result.confidence||"medium",reason:result.reason||""};
+  const img=result.image?'<img src="'+safeText(result.image)+'" alt="">':'';
+  detectedCard.innerHTML=img+'<div><strong>'+safeText(result.title)+'</strong><small>'+safeText(result.type)+' · '+safeText(result.reason||"Identified from the product page")+'</small><small>Estimate only — final price confirmed after checking the item details.</small></div>';
+  detectedCard.hidden=false;
+  productPricePreview.innerHTML="Estimated assembly price <strong>"+money(recognisedProduct.unitPrice*qty)+"</strong><span>"+money(recognisedProduct.unitPrice)+" per item × "+qty+". Based on your standard Fox Fix & Finish rate for "+safeText(result.type)+".</span>";
+  productFeedback.textContent="Item identified. Check the product details, then add it to your basket.";
+  productSubmit.disabled=false;productSubmit.textContent="Add identified item to basket ↗";
+ }catch(err){
+  productPricePreview.innerHTML="<strong>Price to be confirmed</strong><span>We couldn't retrieve reliable product details from this retailer.</span>";
+  productFeedback.textContent=(err.message||"Product lookup failed.")+" You can still add it for a manual quote.";
+  recognisedProduct={manual:true,url:url.href,title:"Furniture item — details to check",type:"Furniture — manual quote",qty,details:document.getElementById("product-details").value.trim(),unitPrice:null,image:""};
+  productSubmit.disabled=false;productSubmit.textContent="Add item for a manual quote ↗";
+ }
+});
+productSubmit.addEventListener("click",e=>{
+ if(!recognisedProduct)return;
+ e.preventDefault();
+ const item={...recognisedProduct,qty:Math.max(1,Math.min(20,Number(productQtyInput.value)||1))};
+ productQuoteItems.push(item);
+ updateBasket();
+ document.getElementById("product-link-form").reset();productQtyInput.value="1";
+ recognisedProduct=null;detectedCard.hidden=true;
+ productPricePreview.textContent="Paste another product link to identify another item.";
+ productFeedback.textContent="Added to your basket. You can add another product link or continue to booking.";
+ productSubmit.disabled=false;productSubmit.textContent="Identify item and calculate price ↗";
  document.getElementById("bottom-bar").hidden=false;
 });
 const dateInput=document.getElementById("customer-date");const today=new Date();dateInput.min=new Date(today.getTime()-today.getTimezoneOffset()*60000).toISOString().slice(0,10);
