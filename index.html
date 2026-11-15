@@ -642,7 +642,7 @@ const detectedCard=document.getElementById("product-detected-card");
 const productSubmit=document.getElementById("product-link-submit");
 const PRODUCT_RECOGNITION_ENDPOINT="https://bmgevnfomcyugvlgxmkd.supabase.co/functions/v1/recognise-furniture";
 // Supabase publishable key: replace the placeholder with the project's sb_publishable_ key.
-const SUPABASE_PUBLISHABLE_KEY="PASTE_YOUR_SUPABASE_PUBLISHABLE_KEY_HERE";
+const SUPABASE_PUBLISHABLE_KEY="sb_publishable_SgB0D4HiYLNQXOd5eAoG1Q_yKvsxPyB";
 let recognisedProduct=null;
 productQtyInput.addEventListener("input",()=>{
  if(recognisedProduct) productPricePreview.innerHTML="Estimated assembly price <strong>"+money(recognisedProduct.unitPrice*Math.max(1,Math.min(20,Number(productQtyInput.value)||1)))+"</strong><span>"+money(recognisedProduct.unitPrice)+" per item × "+Math.max(1,Math.min(20,Number(productQtyInput.value)||1))+". Estimate based on the identified furniture type.</span>";
