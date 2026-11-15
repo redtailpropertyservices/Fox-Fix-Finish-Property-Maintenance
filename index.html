@@ -627,11 +627,20 @@ function basketArtwork(label, imageUrl, kind){
 }
 function basketIcon(value){
  const s=String(value||"").toLowerCase();
- if(/wardrobe|sideboard|drawer|cabinet|bookcase|shelf|furniture|desk|bed|table|chair|sofa|ikea|assembly/.test(s))return "🪑";
- if(/tv|television|screen|monitor/.test(s))return "📺";
+ // Match specific furniture types before broad words such as "table" or "furniture".
+ if(/sliding.?door wardrobe|wardrobe/.test(s))return "🗄️";
+ if(/ottoman|bunk bed|sofa bed|bed frame|bedstead|\bbed\b/.test(s))return "🛏️";
+ if(/chest of drawers|drawer chest|drawers|drawer/.test(s))return "🗄️";
+ if(/bedside/.test(s))return "🛋️";
+ if(/desk|workstation|gaming desk/.test(s))return "🖥️";
+ if(/bookcase|bookshelf|shelving|shelf/.test(s))return "📚";
+ if(/tv unit|media unit|television|screen|monitor/.test(s))return "📺";
+ if(/dining chair|chair/.test(s))return "🪑";
+ if(/sideboard|shoe cabinet|cabinet|storage unit/.test(s))return "🗄️";
+ if(/dining table|coffee table|table/.test(s))return "🪵";
+ if(/sofa/.test(s))return "🛋️";
  if(/blind|curtain/.test(s))return "🪟";
  if(/picture|frame|mirror|clock|mount|hang|bracket/.test(s))return "🖼️";
- if(/shelf/.test(s))return "🪵";
  return "🛠️";
 }
 function updateBasket(){
@@ -643,7 +652,7 @@ function updateBasket(){
  Object.entries(basket).forEach(([id,qty])=>{
   const j=jobs[Number(id)],line=document.createElement("div");line.className="basket-line";
   const left=document.createElement("div");left.className="basket-item-info";
-  const thumb=basketArtwork(j.name,"",j.cat);
+  const thumb=basketArtwork(j.name,"",j.name);
   const details=document.createElement("div");details.className="basket-item-details";
   const name=document.createElement("strong");name.textContent=j.name;
   const meta=document.createElement("small");meta.textContent=j.unit;
@@ -658,7 +667,7 @@ function updateBasket(){
  productQuoteItems.forEach((item,index)=>{
   const line=document.createElement("div");line.className="basket-line";
   const left=document.createElement("div");left.className="basket-item-info";
-  const thumb=basketArtwork(item.title||item.type,item.image,item.type);
+  const thumb=basketArtwork(item.title||item.type,item.image,(item.title||"")+" "+(item.type||""));
   const details=document.createElement("div");details.className="basket-item-details";
   const name=document.createElement("strong");name.textContent=item.title||item.type;
   const typeMeta=document.createElement("small");typeMeta.textContent=item.type+(item.qty>1?" · Qty "+item.qty:"");
