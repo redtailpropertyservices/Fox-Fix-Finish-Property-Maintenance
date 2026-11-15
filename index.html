@@ -641,6 +641,8 @@ const productFeedback=document.getElementById("product-link-feedback");
 const detectedCard=document.getElementById("product-detected-card");
 const productSubmit=document.getElementById("product-link-submit");
 const PRODUCT_RECOGNITION_ENDPOINT="https://bmgevnfomcyugvlgxmkd.supabase.co/functions/v1/recognise-furniture";
+// Supabase publishable key: replace the placeholder with the project's sb_publishable_ key.
+const SUPABASE_PUBLISHABLE_KEY="PASTE_YOUR_SUPABASE_PUBLISHABLE_KEY_HERE";
 let recognisedProduct=null;
 productQtyInput.addEventListener("input",()=>{
  if(recognisedProduct) productPricePreview.innerHTML="Estimated assembly price <strong>"+money(recognisedProduct.unitPrice*Math.max(1,Math.min(20,Number(productQtyInput.value)||1)))+"</strong><span>"+money(recognisedProduct.unitPrice)+" per item × "+Math.max(1,Math.min(20,Number(productQtyInput.value)||1))+". Estimate based on the identified furniture type.</span>";
@@ -658,7 +660,10 @@ document.getElementById("product-link-form").addEventListener("submit",async e=>
  productFeedback.textContent="Checking the retailer page and identifying the furniture. This can take a few seconds.";
  productPricePreview.textContent="Analysing product…";
  try{
-  const response=await fetch(PRODUCT_RECOGNITION_ENDPOINT,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({url:url.href})});
+  if(!SUPABASE_PUBLISHABLE_KEY || SUPABASE_PUBLISHABLE_KEY.includes("PASTE_YOUR_")){
+   throw new Error("The website still needs its Supabase publishable key added before product links can be checked.");
+  }
+  const response=await fetch(PRODUCT_RECOGNITION_ENDPOINT,{method:"POST",headers:{"Content-Type":"application/json","apikey":SUPABASE_PUBLISHABLE_KEY},body:JSON.stringify({url:url.href})});
   const result=await response.json();
   if(!response.ok)throw new Error(result.error||"We couldn't read that product page.");
   if(!result.identified||!Number.isFinite(Number(result.unitPrice))){
