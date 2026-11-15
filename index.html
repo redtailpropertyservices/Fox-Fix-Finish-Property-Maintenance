@@ -379,6 +379,48 @@ footer{background:#fffaf5!important;padding:28px 18px!important;line-height:1.9!
 .product-detected-card[hidden]{display:none}.product-detected-card img{width:76px;height:76px;object-fit:contain;border-radius:8px;background:#faf7f2}
 .product-detected-card strong{display:block;font:800 12px Manrope;margin-bottom:5px}.product-detected-card small{display:block;color:var(--muted);font-size:10px;line-height:1.5}
 .product-price-preview strong{display:block;font:800 24px Manrope;color:var(--orange-dark);margin-top:5px}
+
+/* Mobile-first basket layout: tidy product rows, no retailer URLs or overflow */
+.basket-list{gap:11px!important;margin:18px 0 16px!important}
+.basket-line{display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;align-items:center!important;gap:12px!important;padding:13px!important;border:1px solid #eee2d6!important;border-radius:14px!important;background:#fff!important;min-width:0!important}
+.basket-item-info{display:flex;align-items:center;gap:12px;min-width:0}
+.basket-thumb{width:76px;height:76px;flex:0 0 76px;border-radius:11px;overflow:hidden;background:#faf6f0;border:1px solid #f0e7dd;display:grid;place-items:center}
+.basket-thumb img{display:block;width:100%;height:100%;object-fit:contain;background:#fff}
+.basket-thumb.has-fallback{background:linear-gradient(145deg,#fff3e8,#f8eee3)}
+.basket-thumb span{font-size:30px;line-height:1}
+.basket-item-details{min-width:0;flex:1}
+.basket-item-details strong{display:block;font:800 12px/1.4 Manrope;color:#29251f;overflow-wrap:anywhere}
+.basket-item-details small{display:block;color:#8b837a;font-size:10px;line-height:1.45;margin-top:4px;overflow-wrap:anywhere}
+.basket-item-details .basket-item-note{color:#77716a}
+.basket-line .line-total{font:800 15px Manrope;color:#29251f;text-align:right;white-space:nowrap;align-self:center}
+.basket-line .line-controls{gap:7px;margin-top:8px;flex-wrap:wrap}
+.basket-line .line-controls button{width:27px;height:27px;border-radius:8px}
+.basket-line .line-controls .remove{width:auto;height:auto;padding:4px 2px;font-size:10px}
+.basket-summary{padding-top:15px!important;margin-top:5px}
+.basket-summary span{font-size:12px!important}
+.basket-summary strong{font-size:25px!important}
+@media(max-width:600px){
+ .overlay{align-items:stretch}
+ .drawer{width:100%!important;max-width:none!important;padding:18px 15px calc(24px + env(safe-area-inset-bottom))!important}
+ .drawer-head{position:sticky;top:-18px;z-index:3;background:#fffdfa;padding:8px 0 16px!important}
+ .drawer-head h2{font-size:25px!important}
+ .basket-line{grid-template-columns:minmax(0,1fr) auto!important;gap:8px!important;padding:11px!important}
+ .basket-thumb{width:66px;height:66px;flex-basis:66px}
+ .basket-item-info{gap:9px}
+ .basket-item-details strong{font-size:11px}
+ .basket-line .line-total{font-size:14px}
+ .booking{padding:16px!important;margin-top:18px!important}
+ .booking .two{grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;gap:9px!important}
+ .booking .two>div{min-width:0}
+ .booking input,.booking textarea{min-width:0;font-size:12px!important}
+}
+@media(max-width:360px){
+ .basket-thumb{width:58px;height:58px;flex-basis:58px}
+ .basket-item-info{gap:8px}
+ .basket-line{padding:9px!important}
+ .booking .two{grid-template-columns:1fr!important}
+}
+
 </style>
 </head>
 <body>
@@ -572,6 +614,26 @@ function updateSelection(cat){
  picker.button.disabled=false;
 }
 function totals(){let count=productQuoteItems.reduce((n,item)=>n+item.qty,0),total=productQuoteItems.reduce((n,item)=>n+(item.unitPrice===null?0:item.unitPrice*item.qty),0);Object.entries(basket).forEach(([id,qty])=>{count+=qty;total+=jobs[Number(id)].price*qty});return{count,total,quoteCount:productQuoteItems.length}}
+function basketArtwork(label, imageUrl, kind){
+ const wrap=document.createElement("div");wrap.className="basket-thumb";
+ if(imageUrl){
+  const img=document.createElement("img");img.src=imageUrl;img.alt=label;img.loading="lazy";
+  img.onerror=()=>{wrap.classList.add("has-fallback");img.remove();const icon=document.createElement("span");icon.textContent=basketIcon(kind||label);wrap.append(icon)};
+  wrap.append(img);
+ }else{
+  wrap.classList.add("has-fallback");const icon=document.createElement("span");icon.textContent=basketIcon(kind||label);wrap.append(icon);
+ }
+ return wrap;
+}
+function basketIcon(value){
+ const s=String(value||"").toLowerCase();
+ if(/wardrobe|sideboard|drawer|cabinet|bookcase|shelf|furniture|desk|bed|table|chair|sofa|ikea|assembly/.test(s))return "🪑";
+ if(/tv|television|screen|monitor/.test(s))return "📺";
+ if(/blind|curtain/.test(s))return "🪟";
+ if(/picture|frame|mirror|clock|mount|hang|bracket/.test(s))return "🖼️";
+ if(/shelf/.test(s))return "🪵";
+ return "🛠️";
+}
 function updateBasket(){
  const {count,total}=totals();document.getElementById("top-count").textContent=count;document.getElementById("bottom-count").textContent=count;document.getElementById("bottom-total").textContent=money(total);document.getElementById("bottom-bar").hidden=count===0;document.getElementById("send-booking").disabled=count===0;
  const box=document.getElementById("basket-content");
@@ -580,23 +642,30 @@ function updateBasket(){
  const list=box.querySelector("#basket-list");
  Object.entries(basket).forEach(([id,qty])=>{
   const j=jobs[Number(id)],line=document.createElement("div");line.className="basket-line";
-  const left=document.createElement("div"),name=document.createElement("strong");name.textContent=j.name;const meta=document.createElement("small");meta.textContent=money(j.price)+" each · "+j.unit;const controls=document.createElement("div");controls.className="line-controls";
+  const left=document.createElement("div");left.className="basket-item-info";
+  const thumb=basketArtwork(j.name,"",j.cat);
+  const details=document.createElement("div");details.className="basket-item-details";
+  const name=document.createElement("strong");name.textContent=j.name;
+  const meta=document.createElement("small");meta.textContent=j.unit;
+  const controls=document.createElement("div");controls.className="line-controls";
   const minus=document.createElement("button");minus.textContent="−";minus.setAttribute("aria-label","Remove one "+j.name);minus.onclick=()=>{if(basket[id]>1)basket[id]--;else delete basket[id];updateBasket()};
   const n=document.createElement("b");n.style.fontSize="11px";n.textContent=qty;
   const plus=document.createElement("button");plus.textContent="+";plus.setAttribute("aria-label","Add one "+j.name);plus.onclick=()=>{basket[id]++;updateBasket()};
   const remove=document.createElement("button");remove.className="remove";remove.textContent="Remove";remove.onclick=()=>{delete basket[id];updateBasket()};
-  controls.append(minus,n,plus,remove);left.append(name,meta,controls);
+  controls.append(minus,n,plus,remove);details.append(name,meta,controls);left.append(thumb,details);
   const lineTotal=document.createElement("div");lineTotal.className="line-total";lineTotal.textContent=money(j.price*qty);line.append(left,lineTotal);list.append(line);
  });
  productQuoteItems.forEach((item,index)=>{
   const line=document.createElement("div");line.className="basket-line";
-  const left=document.createElement("div"),name=document.createElement("strong");name.textContent=item.qty+' × '+(item.title||item.type);
-  const typeMeta=document.createElement('small');typeMeta.textContent=item.type;
-  
-  const meta=document.createElement("small");meta.textContent=item.url+(item.details?' · '+item.details:'');
+  const left=document.createElement("div");left.className="basket-item-info";
+  const thumb=basketArtwork(item.title||item.type,item.image,item.type);
+  const details=document.createElement("div");details.className="basket-item-details";
+  const name=document.createElement("strong");name.textContent=item.title||item.type;
+  const typeMeta=document.createElement("small");typeMeta.textContent=item.type+(item.qty>1?" · Qty "+item.qty:"");
+  const meta=document.createElement("small");meta.className="basket-item-note";meta.textContent=item.details||"Product details supplied with booking request";
   const controls=document.createElement("div");controls.className="line-controls";
   const remove=document.createElement("button");remove.className="remove";remove.textContent="Remove";remove.onclick=()=>{productQuoteItems.splice(index,1);updateBasket()};
-  controls.append(remove);left.append(name,typeMeta,meta,controls);
+  controls.append(remove);details.append(name,typeMeta);if(item.details)details.append(meta);details.append(controls);left.append(thumb,details);
   const status=document.createElement("div");status.className="line-total";status.textContent=item.unitPrice===null?"Quote needed":money(item.unitPrice*item.qty);line.append(left,status);list.append(line);
  });
 }
