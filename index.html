@@ -362,6 +362,13 @@ footer{background:#fffaf5!important;padding:28px 18px!important;line-height:1.9!
  .site-header .brand-centred{width:190px!important;height:122px!important}
  .site-header .basket-top{right:8px!important;padding:7px 8px!important}
 }
+
+
+.product-link-card{margin:20px 0 0;background:linear-gradient(135deg,#fff8f1,#fff);border:1px solid #f0d9c5;border-radius:18px;padding:22px;display:grid;grid-template-columns:1fr 1.05fr;gap:24px;align-items:center}
+.product-link-copy h3{font:800 22px Manrope;margin:7px 0}.product-link-copy p{font-size:12px;line-height:1.65;color:#716b64;margin:0;max-width:470px}.retailer-chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:15px}.retailer-chips span{font-size:9px;font-weight:800;background:#fff;border:1px solid #eadfd4;border-radius:99px;padding:6px 9px;color:#625b54}
+.product-link-form{background:#fff;border:1px solid #eee1d5;border-radius:13px;padding:15px}.product-link-form label{display:block;font-size:10px;font-weight:800;margin:9px 0 5px}.product-link-form input,.product-link-form select,.product-link-form textarea{width:100%;border:1px solid #e8ddd1;border-radius:8px;padding:11px;background:#fff;font:12px 'DM Sans';color:#27231f}.product-link-fields{display:grid;grid-template-columns:1fr 100px;gap:10px}.product-link-submit{width:100%;border:0;background:#FF6900;color:#fff;border-radius:9px;padding:13px;font-size:11px;font-weight:800;margin-top:12px;cursor:pointer}.product-link-note{font-size:9px;line-height:1.5;color:#8e877f;margin:9px 0 0}.quote-line{font:800 11px Manrope;color:#a75b20;white-space:nowrap}
+@media(max-width:760px){.product-link-card{grid-template-columns:1fr;padding:16px;gap:14px}.product-link-copy h3{font-size:19px}.product-link-fields{grid-template-columns:1fr 90px}}
+
 </style>
 </head>
 <body>
@@ -408,6 +415,16 @@ footer{background:#fffaf5!important;padding:28px 18px!important;line-height:1.9!
     <a class="contact" href="https://wa.me/447301630675?text=Hi%20Fox%20Fix%20%26%20Finish%2C%20I'd%20like%20a%20quote%20for%20a%20job%20not%20listed%20on%20your%20website." target="_blank" rel="noopener">Get a free quote ↗</a>
    </article>
   </div>
+  <section class="product-link-card" id="product-link-quote" aria-labelledby="product-link-heading">
+   <div class="product-link-copy"><div class="eyebrow">FOUND YOUR FURNITURE ONLINE?</div><h3 id="product-link-heading">Paste your product link</h3><p>Copy the link from IKEA, Amazon, Wayfair, Argos or another retailer. Add it to your request and we'll check the exact item and confirm the assembly price before you book.</p><div class="retailer-chips"><span>IKEA</span><span>Amazon</span><span>Wayfair</span><span>Argos</span><span>Other retailers</span></div></div>
+   <form id="product-link-form" class="product-link-form">
+    <label for="product-url">Product page link</label><input id="product-url" type="url" placeholder="https://www.ikea.com/gb/en/p/..." required>
+    <div class="product-link-fields"><div><label for="product-type">What are you buying?</label><select id="product-type" required><option value="">Choose furniture type…</option><option>Wardrobe</option><option>Bed frame</option><option>Chest of drawers</option><option>Desk</option><option>Dining table</option><option>Dining chairs</option><option>Bookcase / shelving</option><option>TV unit</option><option>Sofa bed</option><option>Storage unit</option><option>Other / multiple items</option></select></div><div><label for="product-quantity">Quantity</label><input id="product-quantity" type="number" min="1" max="20" value="1" required></div></div>
+    <label for="product-details">Product name, size or anything else (optional)</label><textarea id="product-details" rows="2" placeholder="e.g. IKEA PAX 2-door wardrobe, 201cm high"></textarea>
+    <button class="product-link-submit" type="submit">Add item for assembly quote ↗</button>
+    <p class="product-link-note" id="product-link-feedback" aria-live="polite">We'll review the product link and confirm your price. No payment is taken online.</p>
+   </form>
+  </section>
   <div class="promo-note"><strong>Standard fixed pricing:</strong> The prices shown are our normal rates, with no standard discounts applied. Travel is included in our normal service area. Materials and parts are extra and agreed before work begins.</div>
  </section>
 </main>
@@ -509,6 +526,7 @@ const jobs=[
 {cat:"assembly",name:"Secure one item of furniture to wall",price:15,standard:15,unit:"per item"}
 ];
 let basket={};
+let productQuoteItems=[];
 const money=n=>new Intl.NumberFormat("en-GB",{style:"currency",currency:"GBP",maximumFractionDigits:0}).format(n);
 const servicePickers={
  assembly:{select:document.getElementById("assembly-select"),info:document.getElementById("assembly-info"),button:document.getElementById("add-assembly"),empty:"Choose an item to see its fixed price."},
@@ -541,12 +559,12 @@ function updateSelection(cat){
  picker.info.innerHTML="Fixed price<strong>"+money(job.price)+"</strong><span>"+job.unit+"</span>";
  picker.button.disabled=false;
 }
-function totals(){let count=0,total=0;Object.entries(basket).forEach(([id,qty])=>{count+=qty;total+=jobs[Number(id)].price*qty});return{count,total}}
+function totals(){let count=productQuoteItems.reduce((n,item)=>n+item.qty,0),total=0;Object.entries(basket).forEach(([id,qty])=>{count+=qty;total+=jobs[Number(id)].price*qty});return{count,total,quoteCount:productQuoteItems.length}}
 function updateBasket(){
  const {count,total}=totals();document.getElementById("top-count").textContent=count;document.getElementById("bottom-count").textContent=count;document.getElementById("bottom-total").textContent=money(total);document.getElementById("bottom-bar").hidden=count===0;document.getElementById("send-booking").disabled=count===0;
  const box=document.getElementById("basket-content");
  if(!count){box.innerHTML='<div class="basket-empty"><b>Your basket is empty</b>Choose a job from the list and tap Add. You can combine as many different jobs as you need.</div>';return}
- box.innerHTML='<div class="basket-list" id="basket-list"></div><div class="basket-summary"><span>'+count+' job item'+(count===1?"":"s")+' in total</span><strong>'+money(total)+'</strong></div>';
+ box.innerHTML='<div class="basket-list" id="basket-list"></div><div class="basket-summary"><span>'+count+' job item'+(count===1?"":"s")+' in total</span><strong>'+money(total)+(productQuoteItems.length?' + quote required':'')+'</strong></div>';
  const list=box.querySelector("#basket-list");
  Object.entries(basket).forEach(([id,qty])=>{
   const j=jobs[Number(id)],line=document.createElement("div");line.className="basket-line";
@@ -557,6 +575,15 @@ function updateBasket(){
   const remove=document.createElement("button");remove.className="remove";remove.textContent="Remove";remove.onclick=()=>{delete basket[id];updateBasket()};
   controls.append(minus,n,plus,remove);left.append(name,meta,controls);
   const lineTotal=document.createElement("div");lineTotal.className="line-total";lineTotal.textContent=money(j.price*qty);line.append(left,lineTotal);list.append(line);
+ });
+ productQuoteItems.forEach((item,index)=>{
+  const line=document.createElement("div");line.className="basket-line";
+  const left=document.createElement("div"),name=document.createElement("strong");name.textContent=item.qty+' × '+item.type+' — retailer link quote';
+  const meta=document.createElement("small");meta.textContent=item.url+(item.details?' · '+item.details:'');
+  const controls=document.createElement("div");controls.className="line-controls";
+  const remove=document.createElement("button");remove.className="remove";remove.textContent="Remove";remove.onclick=()=>{productQuoteItems.splice(index,1);updateBasket()};
+  controls.append(remove);left.append(name,meta,controls);
+  const status=document.createElement("div");status.className="quote-line";status.textContent="Quote required";line.append(left,status);list.append(line);
  });
 }
 function openBasket(){document.getElementById("overlay").classList.add("open");document.getElementById("overlay").setAttribute("aria-hidden","false");document.body.style.overflow="hidden"}
@@ -578,9 +605,9 @@ contactRadios.forEach(r=>r.addEventListener("change",()=>{
 }));
 document.getElementById("booking-form").addEventListener("submit",e=>{
  e.preventDefault();const {count,total}=totals();if(!count)return;
- const f=new FormData(e.currentTarget),lines=Object.entries(basket).map(([id,qty])=>{const j=jobs[Number(id)];return qty+" × "+j.name+" — "+money(j.price*qty)}).join("\n");
+ const f=new FormData(e.currentTarget),fixedLines=Object.entries(basket).map(([id,qty])=>{const j=jobs[Number(id)];return qty+" × "+j.name+" — "+money(j.price*qty)}).join("\n"),quoteLines=productQuoteItems.map(item=>item.qty+" × "+item.type+" — quote required\nProduct link: "+item.url+(item.details?"\nDetails: "+item.details:"")).join("\n\n"),lines=[fixedLines,quoteLines].filter(Boolean).join("\n\n");
  const method=f.get("contact-method");
- const msg=["Hi Fox Fix & Finish, I'd like to request a booking for these jobs:","",lines,"","Estimated total: "+money(total),"","Name: "+f.get("name"),"Phone: "+(f.get("phone")||"Not provided"),"Email: "+(f.get("email")||"Not provided"),"Postcode / area: "+f.get("postcode"),"Preferred date: "+(f.get("date")||"Flexible"),"Preferred contact: "+method,"Extra details: "+(f.get("notes")||"None"),"","Please let me know your availability and confirm the booking."].join("\n");
+ const msg=["Hi Fox Fix & Finish, I'd like to request a booking for these jobs:","",lines,"","Fixed-price items subtotal: "+money(total),productQuoteItems.length?"Furniture link items: price to be confirmed":"","Name: "+f.get("name"),"Phone: "+(f.get("phone")||"Not provided"),"Email: "+(f.get("email")||"Not provided"),"Postcode / area: "+f.get("postcode"),"Preferred date: "+(f.get("date")||"Flexible"),"Preferred contact: "+method,"Extra details: "+(f.get("notes")||"None"),"","Please let me know your availability and confirm the booking."].join("\n");
  const encoded=encodeURIComponent(msg);
  if(method==="whatsapp"){
   window.open("https://wa.me/"+PHONE+"?text="+encoded,"_blank","noopener");
@@ -594,6 +621,13 @@ document.getElementById("booking-form").addEventListener("submit",e=>{
   window.location.href="mailto:?subject="+encodeURIComponent("Fox Fix & Finish booking request")+"&body="+encoded;
  }
 });
+document.getElementById("product-link-form").addEventListener("submit",e=>{
+ e.preventDefault();const urlField=document.getElementById("product-url"),type=document.getElementById("product-type").value,qty=Math.max(1,Math.min(20,Number(document.getElementById("product-quantity").value)||1)),details=document.getElementById("product-details").value.trim(),feedback=document.getElementById("product-link-feedback");
+ let url;try{url=new URL(urlField.value.trim())}catch{feedback.textContent="Please enter a complete product page link, starting with https://";return}
+ if(!['http:','https:'].includes(url.protocol)){feedback.textContent="Please use a valid product page link.";return}
+ if(!type){feedback.textContent="Please choose the type of furniture so we can review the right assembly work.";return}
+ productQuoteItems.push({url:url.href,type,qty,details});updateBasket();e.currentTarget.reset();document.getElementById("product-quantity").value="1";feedback.textContent="Added to your basket as a quote request. We'll check the exact product and confirm the assembly price.";document.getElementById("bottom-bar").hidden=false;
+ });
 const dateInput=document.getElementById("customer-date");const today=new Date();dateInput.min=new Date(today.getTime()-today.getTimezoneOffset()*60000).toISOString().slice(0,10);
 document.getElementById("booking-form").addEventListener("change",e=>{
  if(e.target.name==="contact-method"){
