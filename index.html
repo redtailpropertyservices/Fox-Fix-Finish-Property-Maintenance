@@ -557,26 +557,26 @@ const jobs=[
 {cat:"mount",name:"Remove existing blind or pole",price:12,standard:12,unit:"per item"},
 {cat:"mount",name:"Install curtain tiebacks (pair)",price:20,standard:20,unit:"per pair"},
 {cat:"mount",name:"Install curtain holdbacks (pair)",price:20,standard:20,unit:"per pair"},
-{cat:"assembly",name:"Bedside table",price:40,standard:40,unit:"per item"},
-{cat:"assembly",name:"Small desk",price:45,standard:45,unit:"per item"},
-{cat:"assembly",name:"Large office desk",price:55,standard:55,unit:"per item"},
-{cat:"assembly",name:"Gaming desk",price:55,standard:55,unit:"per item"},
-{cat:"assembly",name:"Chest of drawers (up to 6 drawers)",price:50,standard:50,unit:"per item"},
-{cat:"assembly",name:"2-door wardrobe",price:75,standard:75,unit:"per item"},
-{cat:"assembly",name:"3-door wardrobe",price:95,standard:95,unit:"per item"},
-{cat:"assembly",name:"4-door wardrobe",price:120,standard:120,unit:"per item"},
-{cat:"assembly",name:"Sliding-door wardrobe",price:130,standard:130,unit:"per item"},
-{cat:"assembly",name:"Bookcase",price:40,standard:40,unit:"per item"},
-{cat:"assembly",name:"TV unit",price:45,standard:45,unit:"per item"},
-{cat:"assembly",name:"Coffee table",price:40,standard:40,unit:"per item"},
-{cat:"assembly",name:"Dining table",price:50,standard:50,unit:"per item"},
-{cat:"assembly",name:"Dining chair",price:40,standard:40,unit:"per chair"},
-{cat:"assembly",name:"Standard bed frame",price:55,standard:55,unit:"per item"},
-{cat:"assembly",name:"Ottoman storage bed",price:90,standard:90,unit:"per item"},
-{cat:"assembly",name:"Bunk bed",price:100,standard:100,unit:"per item"},
-{cat:"assembly",name:"Sofa bed",price:65,standard:65,unit:"per item"},
-{cat:"assembly",name:"Shoe cabinet",price:40,standard:40,unit:"per item"},
-{cat:"assembly",name:"Storage unit",price:45,standard:45,unit:"per item"},
+{cat:"assembly",name:"Bedside table",price:20,standard:20,unit:"per item"},
+{cat:"assembly",name:"Small desk",price:30,standard:30,unit:"per item"},
+{cat:"assembly",name:"Large office desk",price:45,standard:45,unit:"per item"},
+{cat:"assembly",name:"Gaming desk",price:45,standard:45,unit:"per item"},
+{cat:"assembly",name:"Chest of drawers (up to 6 drawers)",price:40,standard:40,unit:"per item"},
+{cat:"assembly",name:"2-door wardrobe",price:65,standard:65,unit:"per item"},
+{cat:"assembly",name:"3-door wardrobe",price:85,standard:85,unit:"per item"},
+{cat:"assembly",name:"4-door wardrobe",price:110,standard:110,unit:"per item"},
+{cat:"assembly",name:"Sliding-door wardrobe",price:120,standard:120,unit:"per item"},
+{cat:"assembly",name:"Bookcase",price:30,standard:30,unit:"per item"},
+{cat:"assembly",name:"TV unit",price:35,standard:35,unit:"per item"},
+{cat:"assembly",name:"Coffee table",price:20,standard:20,unit:"per item"},
+{cat:"assembly",name:"Dining table",price:40,standard:40,unit:"per item"},
+{cat:"assembly",name:"Dining chair",price:12,standard:12,unit:"per chair"},
+{cat:"assembly",name:"Standard bed frame",price:45,standard:45,unit:"per item"},
+{cat:"assembly",name:"Ottoman storage bed",price:75,standard:75,unit:"per item"},
+{cat:"assembly",name:"Bunk bed",price:90,standard:90,unit:"per item"},
+{cat:"assembly",name:"Sofa bed",price:45,standard:45,unit:"per item"},
+{cat:"assembly",name:"Shoe cabinet",price:25,standard:25,unit:"per item"},
+{cat:"assembly",name:"Storage unit",price:30,standard:30,unit:"per item"},
 {cat:"assembly",name:"Secure one item of furniture to wall",price:15,standard:15,unit:"per item"}
 ];
 let basket={};
@@ -613,12 +613,7 @@ function updateSelection(cat){
  picker.info.innerHTML="Fixed price<strong>"+money(job.price)+"</strong><span>"+job.unit+"</span>";
  picker.button.disabled=false;
 }
-function totals(){
- let count=productQuoteItems.reduce((n,item)=>n+item.qty,0),subtotal=productQuoteItems.reduce((n,item)=>n+(item.unitPrice===null?0:item.unitPrice*item.qty),0);
- Object.entries(basket).forEach(([id,qty])=>{count+=qty;subtotal+=jobs[Number(id)].price*qty});
- const calloutFee=count>0&&subtotal<100?25:0;
- return{count,total:subtotal+calloutFee,subtotal,calloutFee,quoteCount:productQuoteItems.length};
-}
+function totals(){let count=productQuoteItems.reduce((n,item)=>n+item.qty,0),total=productQuoteItems.reduce((n,item)=>n+(item.unitPrice===null?0:item.unitPrice*item.qty),0);Object.entries(basket).forEach(([id,qty])=>{count+=qty;total+=jobs[Number(id)].price*qty});return{count,total,quoteCount:productQuoteItems.length}}
 function basketArtwork(label, imageUrl, kind){
  const wrap=document.createElement("div");wrap.className="basket-thumb";
  if(imageUrl){
@@ -649,10 +644,10 @@ function basketIcon(value){
  return "🛠️";
 }
 function updateBasket(){
- const {count,total,subtotal,calloutFee}=totals();document.getElementById("top-count").textContent=count;document.getElementById("bottom-count").textContent=count;document.getElementById("bottom-total").textContent=money(total);document.getElementById("bottom-bar").hidden=count===0;document.getElementById("send-booking").disabled=count===0;
+ const {count,total}=totals();document.getElementById("top-count").textContent=count;document.getElementById("bottom-count").textContent=count;document.getElementById("bottom-total").textContent=money(total);document.getElementById("bottom-bar").hidden=count===0;document.getElementById("send-booking").disabled=count===0;
  const box=document.getElementById("basket-content");
  if(!count){box.innerHTML='<div class="basket-empty"><b>Your basket is empty</b>Choose a job from the list and tap Add. You can combine as many different jobs as you need.</div>';return}
- box.innerHTML='<div class="basket-list" id="basket-list"></div><div class="basket-summary"><div style="display:flex;justify-content:space-between;gap:12px"><span>Work subtotal</span><strong>'+money(subtotal)+'</strong></div>'+(calloutFee?'<div style="display:flex;justify-content:space-between;gap:12px;margin-top:7px"><span>Small-job callout fee (work under £100)</span><strong>'+money(calloutFee)+'</strong></div>':'')+'<div style="display:flex;justify-content:space-between;gap:12px;margin-top:9px;padding-top:9px;border-top:1px solid #eee2d6"><b>Estimated total</b><strong>'+money(total)+(productQuoteItems.some(i=>i.unitPrice===null)?' + manual quote required':'')+'</strong></div></div>';
+ box.innerHTML='<div class="basket-list" id="basket-list"></div><div class="basket-summary"><span>'+count+' job item'+(count===1?"":"s")+' in total</span><strong>'+money(total)+(productQuoteItems.some(i=>i.unitPrice===null)?' + manual quote required':'')+'</strong></div>';
  const list=box.querySelector("#basket-list");
  Object.entries(basket).forEach(([id,qty])=>{
   const j=jobs[Number(id)],line=document.createElement("div");line.className="basket-line";
@@ -704,7 +699,7 @@ document.getElementById("booking-form").addEventListener("submit",e=>{
  e.preventDefault();const {count,total}=totals();if(!count)return;
  const f=new FormData(e.currentTarget),fixedLines=Object.entries(basket).map(([id,qty])=>{const j=jobs[Number(id)];return qty+" × "+j.name+" — "+money(j.price*qty)}).join("\n"),quoteLines=productQuoteItems.map(item=>item.qty+" × "+item.title+" ("+item.type+") — "+(item.unitPrice===null?"price to be confirmed":money(item.unitPrice*item.qty))+"\nProduct link: "+item.url+(item.details?"\nDetails: "+item.details:"")).join("\n\n"),lines=[fixedLines,quoteLines].filter(Boolean).join("\n\n");
  const method=f.get("contact-method");
- const totalsNow=totals();const msg=["Hi Fox Fix & Finish, I'd like to request a booking for these jobs:","",lines,"","Work subtotal: "+money(totalsNow.subtotal),totalsNow.calloutFee?"Small-job callout fee (under £100): "+money(totalsNow.calloutFee):"No small-job callout fee","Estimated total: "+money(totalsNow.total),productQuoteItems.some(item=>item.unitPrice===null)?"Some furniture link items require a manual quote":"","Name: "+f.get("name"),"Phone: "+(f.get("phone")||"Not provided"),"Email: "+(f.get("email")||"Not provided"),"Postcode / area: "+f.get("postcode"),"Preferred date: "+(f.get("date")||"Flexible"),"Preferred contact: "+method,"Extra details: "+(f.get("notes")||"None"),"","Please let me know your availability and confirm the booking."].join("\n");
+ const msg=["Hi Fox Fix & Finish, I'd like to request a booking for these jobs:","",lines,"","Fixed-price items subtotal: "+money(total),productQuoteItems.some(item=>item.unitPrice===null)?"Some furniture link items require a manual quote":"","Name: "+f.get("name"),"Phone: "+(f.get("phone")||"Not provided"),"Email: "+(f.get("email")||"Not provided"),"Postcode / area: "+f.get("postcode"),"Preferred date: "+(f.get("date")||"Flexible"),"Preferred contact: "+method,"Extra details: "+(f.get("notes")||"None"),"","Please let me know your availability and confirm the booking."].join("\n");
  const encoded=encodeURIComponent(msg);
  if(method==="whatsapp"){
   window.open("https://wa.me/"+PHONE+"?text="+encoded,"_blank","noopener");
