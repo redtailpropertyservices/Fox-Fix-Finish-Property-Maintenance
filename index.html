@@ -2,6 +2,7 @@
 <html lang="en-GB">
 <head>
 <meta charset="utf-8">
+<meta name="foxfix-build" content="2026-11-17-product-image-pricing-fix">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#fffaf4">
 <title>Fox Fix & Finish | Book a Small Job</title>
@@ -613,7 +614,7 @@ function updateSelection(cat){
  picker.info.innerHTML="Fixed price<strong>"+money(job.price)+"</strong><span>"+job.unit+"</span>";
  picker.button.disabled=false;
 }
-function totals(){let count=productQuoteItems.reduce((n,item)=>n+item.qty,0),subtotal=productQuoteItems.reduce((n,item)=>n+(item.unitPrice===null?0:item.unitPrice*item.qty),0);Object.entries(basket).forEach(([id,qty])=>{count+=qty;subtotal+=jobs[Number(id)].price*qty});const hasManualQuote=productQuoteItems.some(item=>item.unitPrice===null);const hasAssembly=productQuoteItems.some(item=>item.unitPrice!==null)||Object.entries(basket).some(([id,qty])=>qty>0&&jobs[Number(id)].cat==="assembly");const minimumAdjustment=hasAssembly&&!hasManualQuote&&subtotal>0&&subtotal<40?40-subtotal:0;const billableSubtotal=subtotal+minimumAdjustment;const calloutFee=count>0&&!hasManualQuote&&billableSubtotal>0&&billableSubtotal<100?25:0;return{count,total:billableSubtotal+calloutFee,subtotal,billableSubtotal,minimumAdjustment,calloutFee,quoteCount:productQuoteItems.length,hasManualQuote}}
+function totals(){let count=productQuoteItems.reduce((n,item)=>n+item.qty,0),subtotal=productQuoteItems.reduce((n,item)=>n+(item.unitPrice===null?0:item.unitPrice*item.qty),0);Object.entries(basket).forEach(([id,qty])=>{count+=qty;subtotal+=jobs[Number(id)].price*qty});const hasManualQuote=productQuoteItems.some(item=>item.unitPrice===null);const hasAssembly=productQuoteItems.some(item=>item.unitPrice!==null)||Object.entries(basket).some(([id,qty])=>qty>0&&jobs[Number(id)].cat==="assembly");const minimumAdjustment=hasAssembly&&!hasManualQuote&&subtotal>0&&subtotal<40?40-subtotal:0;const billableSubtotal=subtotal+minimumAdjustment;const calloutFee=count>0&&billableSubtotal>0&&billableSubtotal<100?25:0;return{count,total:billableSubtotal+calloutFee,subtotal,billableSubtotal,minimumAdjustment,calloutFee,quoteCount:productQuoteItems.length,hasManualQuote}}
 function basketArtwork(label, imageUrl, kind){
  const wrap=document.createElement("div");wrap.className="basket-thumb";
  if(imageUrl){
@@ -758,8 +759,8 @@ document.getElementById("product-link-form").addEventListener("submit",async e=>
    productSubmit.disabled=false;productSubmit.textContent="Add item for a manual quote ↗";
    return;
   }
-  recognisedProduct={manual:false,url:url.href,title:result.title,type:result.type,qty,details:document.getElementById("product-details").value.trim(),unitPrice:Number(result.unitPrice),image:result.image||"",confidence:result.confidence||"medium",reason:result.reason||"",estimatedMinutes:Number(result.estimatedMinutes)||0,components:Array.isArray(result.components)?result.components:[]};
-  const img=result.image?'<img src="'+safeText(result.image)+'" alt="">':'';
+  recognisedProduct={manual:false,url:url.href,title:result.title,type:result.type,qty,details:document.getElementById("product-details").value.trim(),unitPrice:Number(result.unitPrice),image:result.image||result.imageUrl||result.image_url||result.thumbnail||"",confidence:result.confidence||"medium",reason:result.reason||"",estimatedMinutes:Number(result.estimatedMinutes)||0,components:Array.isArray(result.components)?result.components:[]};
+  const previewImage=recognisedProduct.image;const img=previewImage?'<img src="'+safeText(previewImage)+'" alt="Product image" loading="lazy" onerror="this.style.display=\'none\'">':'';
   detectedCard.innerHTML=img+'<div><strong>'+safeText(result.title)+'</strong><small>'+safeText(result.type)+' · '+safeText(result.reason||"Identified from the product page")+'</small><small>Estimate only — final price confirmed after checking the item details.</small></div>';
   detectedCard.hidden=false;
   productPricePreview.innerHTML="Estimated assembly price <strong>"+money(recognisedProduct.unitPrice*qty)+"</strong><span>"+money(recognisedProduct.unitPrice)+" per item × "+qty+". Estimated time: "+(Number(result.estimatedMinutes)||0)+" minutes. This is a provisional rule-based estimate and is checked before confirmation.</span>";
