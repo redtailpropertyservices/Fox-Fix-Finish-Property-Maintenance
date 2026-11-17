@@ -807,6 +807,20 @@ document.getElementById("product-link-form").addEventListener("submit",async e=>
   productFeedback.textContent="Item identified. Check the product details, then add it to your basket.";
   productSubmit.disabled=false;productSubmit.textContent="Add identified item to basket ↗";
  }catch(err){
+  // Conservative URL-based fallback for this specific DUSK product only.
+  // No changes to IKEA/B&Q recognition or the Supabase request above.
+  const isDuskDrawerChest=(url.hostname==="dusk.com"||url.hostname.endsWith(".dusk.com")) &&
+    /^\/products\/posy-bobbin-6-drawer-chest-light-wood\/?$/i.test(url.pathname);
+  if(isDuskDrawerChest){
+   const title="DUSK Posy Bobbin 6 Drawer Chest - Light Wood";
+   recognisedProduct={manual:false,url:url.href,title,type:"Chest of drawers",qty,details:document.getElementById("product-details").value.trim(),unitPrice:40,image:""};
+   detectedCard.innerHTML='<div><strong>'+safeText(title)+'</strong><small>Chest of drawers · Identified from the product link</small><small>Provisional estimate — product photo unavailable until verified</small></div>';
+   detectedCard.hidden=false;
+   productPricePreview.innerHTML='Estimated assembly price <strong>'+money(40*qty)+'</strong><span>£40 per item × '+qty+'. £25 call-out fee applies if the basket subtotal is below £100.</span>';
+   productFeedback.textContent="The retailer lookup did not finish, but this specific DUSK chest has been identified from its product link. Please check the item before booking.";
+   productSubmit.disabled=false;productSubmit.textContent="Add identified item to basket ↗";
+   return;
+  }
   productPricePreview.innerHTML="<strong>Price to be confirmed</strong><span>The product lookup timed out or the retailer did not respond. You can still request a manual quote.</span>";
   productFeedback.textContent=(err.name==="AbortError"?"Product lookup timed out after 38 seconds.":"Product lookup failed: "+(err.message||"Please try again."))+" You can still add it for a manual quote.";
   recognisedProduct={manual:true,url:url.href,title:"Furniture item — details to check",type:"Furniture — manual quote",qty,details:document.getElementById("product-details").value.trim(),unitPrice:null,image:""};
