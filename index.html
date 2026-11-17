@@ -734,15 +734,15 @@ document.getElementById("product-link-form").addEventListener("submit",async e=>
  try{url=new URL(urlField.value.trim())}catch{productFeedback.textContent="Please enter a complete product link starting with https://";return}
  if(url.protocol!=="https:"){productFeedback.textContent="Please use a secure https:// product link.";return}
  recognisedProduct=null;detectedCard.hidden=true;
- productSubmit.disabled=true;productSubmit.textContent="Reading product details…";
- productFeedback.textContent="Checking the retailer page and identifying the furniture. This can take a few seconds.";
+ productSubmit.disabled=true;productSubmit.textContent="Identifying product…";
+ productFeedback.textContent="Checking the retailer page and identifying the furniture. This can take up to 30 seconds.";
  productPricePreview.textContent="Analysing product…";
  try{
   if(!SUPABASE_PUBLISHABLE_KEY || SUPABASE_PUBLISHABLE_KEY.includes("PASTE_YOUR_")){
    throw new Error("The website still needs its Supabase publishable key added before product links can be checked.");
   }
   const lookupController=new AbortController();
-  const lookupTimer=setTimeout(()=>lookupController.abort(),38000);
+  const lookupTimer=setTimeout(()=>lookupController.abort(),32000);
   let response,result;
   try{
    response=await fetch(PRODUCT_RECOGNITION_ENDPOINT,{method:"POST",headers:{"Content-Type":"application/json","apikey":SUPABASE_PUBLISHABLE_KEY},body:JSON.stringify({url:url.href}),signal:lookupController.signal});
@@ -767,7 +767,7 @@ document.getElementById("product-link-form").addEventListener("submit",async e=>
   productSubmit.disabled=false;productSubmit.textContent="Add identified item to basket ↗";
  }catch(err){
   productPricePreview.innerHTML="<strong>Price to be confirmed</strong><span>The product lookup timed out or the retailer did not respond. You can still request a manual quote.</span>";
-  productFeedback.textContent=(err.name==="AbortError"?"Product lookup timed out after 38 seconds.":"Product lookup failed: "+(err.message||"Please try again."))+" You can still add it for a manual quote.";
+  productFeedback.textContent=(err.name==="AbortError"?"Product lookup timed out after 32 seconds.":"Product lookup failed: "+(err.message||"Please try again."))+" You can still add it for a manual quote.";
   recognisedProduct={manual:true,url:url.href,title:"Furniture item — details to check",type:"Furniture — manual quote",qty,details:document.getElementById("product-details").value.trim(),unitPrice:null,image:""};
   productSubmit.disabled=false;productSubmit.textContent="Add item for a manual quote ↗";
  }
