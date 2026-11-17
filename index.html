@@ -2,7 +2,6 @@
 <html lang="en-GB">
 <head>
 <meta charset="utf-8">
-<meta name="foxfix-build" content="2026-11-17-product-image-pricing-fix">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#fffaf4">
 <title>Fox Fix & Finish | Book a Small Job</title>
@@ -422,6 +421,23 @@ footer{background:#fffaf5!important;padding:28px 18px!important;line-height:1.9!
  .booking .two{grid-template-columns:1fr!important}
 }
 
+
+/* Launch adjustments: compact basket, aligned date field, no iPhone input zoom */
+.site-header .basket-top{min-height:36px!important;padding:7px 10px!important;font-size:10px!important;gap:6px!important;border-radius:10px!important}
+.site-header .basket-count{width:18px!important;height:18px!important;font-size:9px!important}
+.booking .two{grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;align-items:end!important}
+.booking .two>div{min-width:0!important}
+.booking .two input{display:block;min-width:0!important;max-width:100%!important;width:100%!important;height:45px!important;box-sizing:border-box!important}
+.basket-breakdown{display:grid;gap:9px;border-top:1px solid var(--line);padding:14px 0 9px}
+.basket-breakdown>div{display:flex;justify-content:space-between;gap:12px;align-items:center;font-size:11px;color:var(--muted)}
+.basket-breakdown strong{color:var(--ink);font:800 13px Manrope}
+@media(max-width:760px){
+ input,select,textarea,.booking input,.booking textarea,.product-link-form input,.product-link-form select,.product-link-form textarea,.service-card select{font-size:16px!important}
+ .site-header .basket-top{right:9px!important;padding:6px 8px!important;font-size:9px!important;min-height:33px!important}
+ .booking .two{gap:9px!important}
+ .booking .two input{padding:9px!important}
+}
+@media(max-width:360px){.booking .two{grid-template-columns:1fr!important}}
 </style>
 </head>
 <body>
@@ -480,7 +496,7 @@ footer{background:#fffaf5!important;padding:28px 18px!important;line-height:1.9!
     <p class="product-link-note" id="product-link-feedback" aria-live="polite">If the retailer blocks access or the item details are unclear, we’ll ask for a manual quote instead of guessing. No payment is taken online.</p>
    </form>
   </section>
-  <div class="promo-note"><strong>Standard fixed pricing:</strong> The prices shown are our normal rates, with no standard discounts applied. Travel is included in our normal service area. Materials and parts are extra and agreed before work begins.</div>
+  <div class="promo-note"><strong>Clear fixed pricing:</strong> Furniture assembly starts at £40 per item. A £25 call-out fee is added once to bookings with a work subtotal below £100. Travel is included in our normal service area. Materials and parts are extra and agreed before work begins.</div>
  </section>
 </main>
 <footer id="how"><strong>Fox Fix & Finish Property Maintenance</strong> · Reliable · Professional · Affordable<br>Call or WhatsApp <strong>07301 630675</strong> · Booking requests are confirmed personally.</footer>
@@ -580,6 +596,7 @@ const jobs=[
 {cat:"assembly",name:"Storage unit",price:30,standard:30,unit:"per item"},
 {cat:"assembly",name:"Secure one item of furniture to wall",price:15,standard:15,unit:"per item"}
 ];
+jobs.forEach(job=>{if(job.cat==="assembly" && job.price<40){job.price=40;job.standard=Math.max(40,job.standard||0)}});
 let basket={};
 let productQuoteItems=[];
 const money=n=>new Intl.NumberFormat("en-GB",{style:"currency",currency:"GBP",maximumFractionDigits:0}).format(n);
@@ -614,7 +631,15 @@ function updateSelection(cat){
  picker.info.innerHTML="Fixed price<strong>"+money(job.price)+"</strong><span>"+job.unit+"</span>";
  picker.button.disabled=false;
 }
-function totals(){let count=productQuoteItems.reduce((n,item)=>n+item.qty,0),subtotal=productQuoteItems.reduce((n,item)=>n+(item.unitPrice===null?0:item.unitPrice*item.qty),0);Object.entries(basket).forEach(([id,qty])=>{count+=qty;subtotal+=jobs[Number(id)].price*qty});const hasManualQuote=productQuoteItems.some(item=>item.unitPrice===null);const hasAssembly=productQuoteItems.some(item=>item.unitPrice!==null)||Object.entries(basket).some(([id,qty])=>qty>0&&jobs[Number(id)].cat==="assembly");const minimumAdjustment=hasAssembly&&!hasManualQuote&&subtotal>0&&subtotal<40?40-subtotal:0;const billableSubtotal=subtotal+minimumAdjustment;const calloutFee=count>0&&billableSubtotal>0&&billableSubtotal<100?25:0;return{count,total:billableSubtotal+calloutFee,subtotal,billableSubtotal,minimumAdjustment,calloutFee,quoteCount:productQuoteItems.length,hasManualQuote}}
+function totals(){
+ let count=productQuoteItems.reduce((n,item)=>n+item.qty,0);
+ let subtotal=productQuoteItems.reduce((n,item)=>n+(item.unitPrice===null?0:Math.max(40,item.unitPrice)*item.qty),0);
+ Object.entries(basket).forEach(([id,qty])=>{count+=qty;subtotal+=jobs[Number(id)].price*qty});
+ // The £25 call-out is applied once to the entire booking, never per item.
+ // Manual-quote items have no confirmed price and are not included in the known subtotal.
+ const callout=count>0 && subtotal<100 ? 25 : 0;
+ return {count,subtotal,callout,total:subtotal+callout,quoteCount:productQuoteItems.length};
+}
 function basketArtwork(label, imageUrl, kind){
  const wrap=document.createElement("div");wrap.className="basket-thumb";
  if(imageUrl){
@@ -645,10 +670,14 @@ function basketIcon(value){
  return "🛠️";
 }
 function updateBasket(){
- const {count,total,subtotal,billableSubtotal,minimumAdjustment,calloutFee,hasManualQuote}=totals();document.getElementById("top-count").textContent=count;document.getElementById("bottom-count").textContent=count;document.getElementById("bottom-total").textContent=money(total);document.getElementById("bottom-bar").hidden=count===0;document.getElementById("send-booking").disabled=count===0;
+ const {count,total}=totals();document.getElementById("top-count").textContent=count;document.getElementById("bottom-count").textContent=count;document.getElementById("bottom-total").textContent=money(total);document.getElementById("bottom-bar").hidden=count===0;document.getElementById("send-booking").disabled=count===0;
  const box=document.getElementById("basket-content");
  if(!count){box.innerHTML='<div class="basket-empty"><b>Your basket is empty</b>Choose a job from the list and tap Add. You can combine as many different jobs as you need.</div>';return}
- box.innerHTML='<div class="basket-list" id="basket-list"></div><div style="display:grid;gap:7px;padding:12px 0;border-top:1px solid #eee2d6"><div style="display:flex;justify-content:space-between;font-size:12px;color:#777"><span>Work subtotal</span><strong>'+money(subtotal)+'</strong></div>'+(minimumAdjustment?'<div style="display:flex;justify-content:space-between;font-size:12px;color:#777"><span>Minimum assembly booking adjustment</span><strong>'+money(minimumAdjustment)+'</strong></div>':'')+(calloutFee?'<div style="display:flex;justify-content:space-between;font-size:12px;color:#777"><span>Small booking call-out fee</span><strong>'+money(calloutFee)+'</strong></div>':'')+(hasManualQuote?'<small style="color:#8b837a">Furniture awaiting a manual quote is not included in this total.</small>':'')+'</div><div class="basket-summary"><span>Estimated booking total</span><strong>'+money(total)+(hasManualQuote?' + quote pending':'')+'</strong></div>';
+ const {subtotal,callout}=totals();
+ box.innerHTML='<div class="basket-list" id="basket-list"></div><div class="basket-breakdown">'+
+ '<div><span>Work subtotal</span><strong>'+money(subtotal)+'</strong></div>'+
+ (callout?'<div><span>Call-out fee (bookings under £100)</span><strong>'+money(callout)+'</strong></div>':'')+
+ '</div><div class="basket-summary"><span>'+count+' job item'+(count===1?'':'s')+' in total</span><strong>'+money(total)+(productQuoteItems.some(i=>i.unitPrice===null)?' + manual quote required':'')+'</strong></div>';
  const list=box.querySelector("#basket-list");
  Object.entries(basket).forEach(([id,qty])=>{
   const j=jobs[Number(id)],line=document.createElement("div");line.className="basket-line";
@@ -676,7 +705,7 @@ function updateBasket(){
   const controls=document.createElement("div");controls.className="line-controls";
   const remove=document.createElement("button");remove.className="remove";remove.textContent="Remove";remove.onclick=()=>{productQuoteItems.splice(index,1);updateBasket()};
   controls.append(remove);details.append(name,typeMeta);if(item.details)details.append(meta);details.append(controls);left.append(thumb,details);
-  const status=document.createElement("div");status.className="line-total";status.textContent=item.unitPrice===null?"Quote needed":money(item.unitPrice*item.qty);line.append(left,status);list.append(line);
+  const status=document.createElement("div");status.className="line-total";status.textContent=item.unitPrice===null?"Quote needed":money(Math.max(40,item.unitPrice)*item.qty);line.append(left,status);list.append(line);
  });
 }
 function openBasket(){document.getElementById("overlay").classList.add("open");document.getElementById("overlay").setAttribute("aria-hidden","false");document.body.style.overflow="hidden"}
@@ -697,10 +726,10 @@ contactRadios.forEach(r=>r.addEventListener("change",()=>{
  contactHint.textContent=contactCopy[document.querySelector('input[name="contact-method"]:checked').value];
 }));
 document.getElementById("booking-form").addEventListener("submit",e=>{
- e.preventDefault();const {count,total,subtotal,billableSubtotal,minimumAdjustment,calloutFee,hasManualQuote}=totals();if(!count)return;
- const f=new FormData(e.currentTarget),fixedLines=Object.entries(basket).map(([id,qty])=>{const j=jobs[Number(id)];return qty+" × "+j.name+" — "+money(j.price*qty)}).join("\n"),quoteLines=productQuoteItems.map(item=>item.qty+" × "+item.title+" ("+item.type+") — "+(item.unitPrice===null?"price to be confirmed":money(item.unitPrice*item.qty))+"\nProduct link: "+item.url+(item.details?"\nDetails: "+item.details:"")).join("\n\n"),lines=[fixedLines,quoteLines].filter(Boolean).join("\n\n");
+ e.preventDefault();const {count,total,subtotal,callout}=totals();if(!count)return;
+ const f=new FormData(e.currentTarget),fixedLines=Object.entries(basket).map(([id,qty])=>{const j=jobs[Number(id)];return qty+" × "+j.name+" — "+money(j.price*qty)}).join("\n"),quoteLines=productQuoteItems.map(item=>item.qty+" × "+item.title+" ("+item.type+") — "+(item.unitPrice===null?"price to be confirmed":money(Math.max(40,item.unitPrice)*item.qty))+"\nProduct link: "+item.url+(item.details?"\nDetails: "+item.details:"")).join("\n\n"),lines=[fixedLines,quoteLines].filter(Boolean).join("\n\n");
  const method=f.get("contact-method");
- const msg=["Hi Fox Fix & Finish, I'd like to request a booking for these jobs:","",lines,"","Work subtotal: "+money(subtotal),minimumAdjustment?"Minimum assembly booking adjustment: "+money(minimumAdjustment):"",calloutFee?"Small booking call-out fee: "+money(calloutFee):"", "Estimated booking total: "+money(total),hasManualQuote?"Some furniture link items require a manual quote; final total to be confirmed":"","Name: "+f.get("name"),"Phone: "+(f.get("phone")||"Not provided"),"Email: "+(f.get("email")||"Not provided"),"Postcode / area: "+f.get("postcode"),"Preferred date: "+(f.get("date")||"Flexible"),"Preferred contact: "+method,"Extra details: "+(f.get("notes")||"None"),"","Please let me know your availability and confirm the booking."].join("\n");
+ const msg=["Hi Fox Fix & Finish, I'd like to request a booking for these jobs:","",lines,"","Work subtotal: "+money(subtotal),"Call-out fee: "+money(callout),"Estimated booking total: "+money(total),productQuoteItems.some(item=>item.unitPrice===null)?"Some furniture link items require a manual quote":"","Name: "+f.get("name"),"Phone: "+(f.get("phone")||"Not provided"),"Email: "+(f.get("email")||"Not provided"),"Postcode / area: "+f.get("postcode"),"Preferred date: "+(f.get("date")||"Flexible"),"Preferred contact: "+method,"Extra details: "+(f.get("notes")||"None"),"","Please let me know your availability and confirm the booking."].join("\n");
  const encoded=encodeURIComponent(msg);
  if(method==="whatsapp"){
   window.open("https://wa.me/"+PHONE+"?text="+encoded,"_blank","noopener");
@@ -724,7 +753,7 @@ const PRODUCT_RECOGNITION_ENDPOINT="https://bmgevnfomcyugvlgxmkd.supabase.co/fun
 const SUPABASE_PUBLISHABLE_KEY="sb_publishable_SgB0D4HiYLNQXOd5eAoG1Q_yKvsxPyB";
 let recognisedProduct=null;
 productQtyInput.addEventListener("input",()=>{
- if(recognisedProduct) productPricePreview.innerHTML="Estimated assembly price <strong>"+money(recognisedProduct.unitPrice*Math.max(1,Math.min(20,Number(productQtyInput.value)||1)))+"</strong><span>"+money(recognisedProduct.unitPrice)+" per item × "+Math.max(1,Math.min(20,Number(productQtyInput.value)||1))+". Estimate based on the identified furniture type.</span>";
+ if(recognisedProduct) productPricePreview.innerHTML="Estimated assembly price <strong>"+money(Math.max(40,recognisedProduct.unitPrice)*Math.max(1,Math.min(20,Number(productQtyInput.value)||1)))+"</strong><span>"+money(recognisedProduct.unitPrice)+" per item × "+Math.max(1,Math.min(20,Number(productQtyInput.value)||1))+". Estimate based on the identified furniture type.</span>";
 });
 function safeText(value){return String(value??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
 document.getElementById("product-link-form").addEventListener("submit",async e=>{
@@ -755,15 +784,16 @@ document.getElementById("product-link-form").addEventListener("submit",async e=>
   if(!result.identified||!Number.isFinite(Number(result.unitPrice))){
    productPricePreview.innerHTML="<strong>Price to be confirmed</strong><span>We couldn't identify the assembly type confidently enough to give you a reliable price.</span>";
    productFeedback.textContent=result.message||"Please add the product to a manual quote. We’ll check the exact item before confirming a price.";
-   recognisedProduct={manual:true,url:url.href,title:result.title||"Furniture item",type:result.type||"Furniture — manual quote",qty,details:document.getElementById("product-details").value.trim(),unitPrice:null,image:result.image||""};
+   recognisedProduct={manual:true,url:url.href,title:result.title||"Furniture item",type:result.type||"Furniture — manual quote",qty,details:document.getElementById("product-details").value.trim(),unitPrice:null,image:result.image||result.imageUrl||result.image_url||result.thumbnail||""};
    productSubmit.disabled=false;productSubmit.textContent="Add item for a manual quote ↗";
    return;
   }
-  recognisedProduct={manual:false,url:url.href,title:result.title,type:result.type,qty,details:document.getElementById("product-details").value.trim(),unitPrice:Number(result.unitPrice),image:result.image||result.imageUrl||result.image_url||result.thumbnail||"",confidence:result.confidence||"medium",reason:result.reason||"",estimatedMinutes:Number(result.estimatedMinutes)||0,components:Array.isArray(result.components)?result.components:[]};
-  const previewImage=recognisedProduct.image;const img=previewImage?'<img src="'+safeText(previewImage)+'" alt="Product image" loading="lazy" onerror="this.style.display=\'none\'">':'';
+  recognisedProduct={manual:false,url:url.href,title:result.title,type:result.type,qty,details:document.getElementById("product-details").value.trim(),unitPrice:Math.max(40,Number(result.unitPrice)),image:result.image||result.imageUrl||result.image_url||result.thumbnail||"",confidence:result.confidence||"medium",reason:result.reason||""};
+  const productImage=recognisedProduct.image;
+  const img=productImage?'<img src="'+safeText(productImage)+'" alt="Product image" onerror="this.style.display=\'none\'">':'';
   detectedCard.innerHTML=img+'<div><strong>'+safeText(result.title)+'</strong><small>'+safeText(result.type)+' · '+safeText(result.reason||"Identified from the product page")+'</small><small>Estimate only — final price confirmed after checking the item details.</small></div>';
   detectedCard.hidden=false;
-  productPricePreview.innerHTML="Estimated assembly price <strong>"+money(recognisedProduct.unitPrice*qty)+"</strong><span>"+money(recognisedProduct.unitPrice)+" per item × "+qty+". Estimated time: "+(Number(result.estimatedMinutes)||0)+" minutes. This is a provisional rule-based estimate and is checked before confirmation.</span>";
+  productPricePreview.innerHTML="Estimated assembly price <strong>"+money(recognisedProduct.unitPrice*qty)+"</strong><span>"+money(recognisedProduct.unitPrice)+" per item × "+qty+". Based on your standard Fox Fix & Finish rate for "+safeText(result.type)+".</span>";
   productFeedback.textContent="Item identified. Check the product details, then add it to your basket.";
   productSubmit.disabled=false;productSubmit.textContent="Add identified item to basket ↗";
  }catch(err){
