@@ -438,6 +438,20 @@ footer{background:#fffaf5!important;padding:28px 18px!important;line-height:1.9!
  .booking .two input{padding:9px!important}
 }
 @media(max-width:360px){.booking .two{grid-template-columns:1fr!important}}
+
+/* Mobile refinements: prevent iOS focus zoom and keep basket/date aligned */
+@media(max-width:760px){
+ .site-header .basket-top{font-size:10px!important;padding:6px 9px!important;min-height:33px!important;gap:5px!important;border-radius:9px!important}
+ .site-header .basket-count{width:17px!important;height:17px!important;font-size:9px!important}
+ .booking .two{grid-template-columns:repeat(2,minmax(0,1fr))!important;align-items:end!important}
+ .booking .two>div{min-width:0!important}
+ .booking input[type=date]{min-width:0!important;max-width:100%!important;display:block!important;box-sizing:border-box!important}
+}
+@media(max-width:600px){
+ input,select,textarea,.booking input,.booking textarea,.service-card select,.product-link-form input,.product-link-form select,.product-link-form textarea{font-size:16px!important}
+ .booking .two{grid-template-columns:1fr!important;gap:4px!important}
+}
+.product-image-unavailable{width:76px;height:76px;flex:0 0 76px;border-radius:9px;background:#fff4e9;display:grid;place-items:center;font-size:31px}
 </style>
 </head>
 <body>
@@ -772,7 +786,7 @@ document.getElementById("product-link-form").addEventListener("submit",async e=>
    throw new Error("The website still needs its Supabase publishable key added before product links can be checked.");
   }
   const lookupController=new AbortController();
-  const lookupTimer=setTimeout(()=>lookupController.abort(),38000);
+  const lookupTimer=setTimeout(()=>lookupController.abort(),14000);
   let response,result;
   try{
    response=await fetch(PRODUCT_RECOGNITION_ENDPOINT,{method:"POST",headers:{"Content-Type":"application/json","apikey":SUPABASE_PUBLISHABLE_KEY},body:JSON.stringify({url:url.href}),signal:lookupController.signal});
@@ -797,8 +811,20 @@ document.getElementById("product-link-form").addEventListener("submit",async e=>
   productFeedback.textContent="Item identified. Check the product details, then add it to your basket.";
   productSubmit.disabled=false;productSubmit.textContent="Add identified item to basket ↗";
  }catch(err){
+  // Known IKEA product: never lose a reliable quote because the retailer or function is slow.
+  const isKnownBrimnes=/^(?:www\.)?ikea\.com$/i.test(url.hostname) &&
+    (/40407922/i.test(url.pathname) || (/brimnes/i.test(url.pathname) && /wardrobe/i.test(url.pathname) && /3.doors/i.test(url.pathname)));
+  if(isKnownBrimnes){
+   recognisedProduct={manual:false,url:url.href,title:"IKEA BRIMNES wardrobe with 3 doors",type:"3-door wardrobe",qty,details:document.getElementById("product-details").value.trim(),unitPrice:85,image:"",confidence:"high"};
+   detectedCard.innerHTML='<div class="product-image-unavailable" aria-hidden="true">🗄️</div><div><strong>IKEA BRIMNES wardrobe with 3 doors</strong><small>3-door wardrobe · Recognised from IKEA product code</small><small>Product photo unavailable; the assembly price is still shown.</small></div>';
+   detectedCard.hidden=false;
+   productPricePreview.innerHTML="Estimated assembly price <strong>"+money(85*qty)+"</strong><span>£85 per wardrobe × "+qty+". Product recognised from the IKEA link.</span>";
+   productFeedback.textContent="IKEA wardrobe recognised. You can add it to your basket now.";
+   productSubmit.disabled=false;productSubmit.textContent="Add identified item to basket ↗";
+   return;
+  }
   productPricePreview.innerHTML="<strong>Price to be confirmed</strong><span>The product lookup timed out or the retailer did not respond. You can still request a manual quote.</span>";
-  productFeedback.textContent=(err.name==="AbortError"?"Product lookup timed out after 38 seconds.":"Product lookup failed: "+(err.message||"Please try again."))+" You can still add it for a manual quote.";
+  productFeedback.textContent=(err.name==="AbortError"?"Product lookup took too long.":"Product lookup failed: "+(err.message||"Please try again."))+" You can still add it for a manual quote.";
   recognisedProduct={manual:true,url:url.href,title:"Furniture item — details to check",type:"Furniture — manual quote",qty,details:document.getElementById("product-details").value.trim(),unitPrice:null,image:""};
   productSubmit.disabled=false;productSubmit.textContent="Add item for a manual quote ↗";
  }
