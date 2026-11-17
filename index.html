@@ -422,36 +422,24 @@ footer{background:#fffaf5!important;padding:28px 18px!important;line-height:1.9!
 }
 
 
-/* Launch adjustments: compact basket, aligned date field, no iPhone input zoom */
-.site-header .basket-top{min-height:36px!important;padding:7px 10px!important;font-size:10px!important;gap:6px!important;border-radius:10px!important}
-.site-header .basket-count{width:18px!important;height:18px!important;font-size:9px!important}
-.booking .two{grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;align-items:end!important}
-.booking .two>div{min-width:0!important}
-.booking .two input{display:block;min-width:0!important;max-width:100%!important;width:100%!important;height:45px!important;box-sizing:border-box!important}
-.basket-breakdown{display:grid;gap:9px;border-top:1px solid var(--line);padding:14px 0 9px}
-.basket-breakdown>div{display:flex;justify-content:space-between;gap:12px;align-items:center;font-size:11px;color:var(--muted)}
-.basket-breakdown strong{color:var(--ink);font:800 13px Manrope}
-@media(max-width:760px){
- input,select,textarea,.booking input,.booking textarea,.product-link-form input,.product-link-form select,.product-link-form textarea,.service-card select{font-size:16px!important}
- .site-header .basket-top{right:9px!important;padding:6px 8px!important;font-size:9px!important;min-height:33px!important}
- .booking .two{gap:9px!important}
- .booking .two input{padding:9px!important}
+/* Safe mobile and booking refinements (no product lookup changes). */
+@media (max-width: 760px) {
+  .site-header .basket-top {padding:6px 8px!important;min-height:34px!important;font-size:9px!important;gap:5px!important;border-radius:9px!important;max-width:105px!important}
+  .site-header .basket-count {width:18px!important;height:18px!important;font-size:9px!important;flex-shrink:0}
+  input, select, textarea, .booking input, .booking textarea,
+  .product-link-form input, .product-link-form select, .product-link-form textarea,
+  .service-card select, .quick-book select {font-size:16px!important}
+  .booking .two {grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;gap:10px!important;align-items:start!important}
+  .booking .two > div {min-width:0!important;display:flex;flex-direction:column}
+  .booking input[type=date] {display:block;width:100%!important;min-width:0!important;max-width:100%!important;min-height:46px;box-sizing:border-box;-webkit-appearance:none;appearance:none}
 }
-@media(max-width:360px){.booking .two{grid-template-columns:1fr!important}}
-
-/* Mobile refinements: prevent iOS focus zoom and keep basket/date aligned */
-@media(max-width:760px){
- .site-header .basket-top{font-size:10px!important;padding:6px 9px!important;min-height:33px!important;gap:5px!important;border-radius:9px!important}
- .site-header .basket-count{width:17px!important;height:17px!important;font-size:9px!important}
- .booking .two{grid-template-columns:repeat(2,minmax(0,1fr))!important;align-items:end!important}
- .booking .two>div{min-width:0!important}
- .booking input[type=date]{min-width:0!important;max-width:100%!important;display:block!important;box-sizing:border-box!important}
-}
-@media(max-width:600px){
- input,select,textarea,.booking input,.booking textarea,.service-card select,.product-link-form input,.product-link-form select,.product-link-form textarea{font-size:16px!important}
- .booking .two{grid-template-columns:1fr!important;gap:4px!important}
-}
-.product-image-unavailable{width:76px;height:76px;flex:0 0 76px;border-radius:9px;background:#fff4e9;display:grid;place-items:center;font-size:31px}
+@media (max-width:380px) {.booking .two {grid-template-columns:1fr!important}}
+.basket-cost-breakdown{margin-top:12px;border-top:1px solid var(--line);padding-top:12px;display:grid;gap:8px}
+.basket-cost-row{display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:12px}
+.basket-cost-row strong{font:800 13px Manrope}
+.basket-cost-row.final{padding-top:10px;border-top:1px solid var(--line);font-weight:800}
+.basket-cost-row.final strong{font-size:22px;color:var(--orange-dark)}
+.basket-cost-note{font-size:10px;color:var(--muted);line-height:1.5}
 </style>
 </head>
 <body>
@@ -510,7 +498,7 @@ footer{background:#fffaf5!important;padding:28px 18px!important;line-height:1.9!
     <p class="product-link-note" id="product-link-feedback" aria-live="polite">If the retailer blocks access or the item details are unclear, we’ll ask for a manual quote instead of guessing. No payment is taken online.</p>
    </form>
   </section>
-  <div class="promo-note"><strong>Clear fixed pricing:</strong> Furniture assembly starts at £40 per item. A £25 call-out fee is added once to bookings with a work subtotal below £100. Travel is included in our normal service area. Materials and parts are extra and agreed before work begins.</div>
+  <div class="promo-note"><strong>Standard fixed pricing:</strong> The prices shown are our normal rates, with no standard discounts applied. Travel is included in our normal service area. Materials and parts are extra and agreed before work begins.</div>
  </section>
 </main>
 <footer id="how"><strong>Fox Fix & Finish Property Maintenance</strong> · Reliable · Professional · Affordable<br>Call or WhatsApp <strong>07301 630675</strong> · Booking requests are confirmed personally.</footer>
@@ -610,7 +598,13 @@ const jobs=[
 {cat:"assembly",name:"Storage unit",price:30,standard:30,unit:"per item"},
 {cat:"assembly",name:"Secure one item of furniture to wall",price:15,standard:15,unit:"per item"}
 ];
-jobs.forEach(job=>{if(job.cat==="assembly" && job.price<40){job.price=40;job.standard=Math.max(40,job.standard||0)}});
+// Display and basket prices only. Product recognition stays in the original Supabase function.
+const MIN_ASSEMBLY_PRICE=40;
+const SMALL_BOOKING_THRESHOLD=100;
+const SMALL_BOOKING_CALLOUT=25;
+for(const job of jobs){
+ if(job.cat==="assembly") job.price=Math.max(MIN_ASSEMBLY_PRICE,job.price);
+}
 let basket={};
 let productQuoteItems=[];
 const money=n=>new Intl.NumberFormat("en-GB",{style:"currency",currency:"GBP",maximumFractionDigits:0}).format(n);
@@ -646,13 +640,17 @@ function updateSelection(cat){
  picker.button.disabled=false;
 }
 function totals(){
- let count=productQuoteItems.reduce((n,item)=>n+item.qty,0);
- let subtotal=productQuoteItems.reduce((n,item)=>n+(item.unitPrice===null?0:Math.max(40,item.unitPrice)*item.qty),0);
- Object.entries(basket).forEach(([id,qty])=>{count+=qty;subtotal+=jobs[Number(id)].price*qty});
- // The £25 call-out is applied once to the entire booking, never per item.
- // Manual-quote items have no confirmed price and are not included in the known subtotal.
- const callout=count>0 && subtotal<100 ? 25 : 0;
- return {count,subtotal,callout,total:subtotal+callout,quoteCount:productQuoteItems.length};
+ let count=0,subtotal=0;
+ for(const item of productQuoteItems){
+  count+=item.qty;
+  if(item.unitPrice!==null) subtotal+=Math.max(MIN_ASSEMBLY_PRICE,Number(item.unitPrice)||0)*item.qty;
+ }
+ for(const [id,qty] of Object.entries(basket)){
+  count+=qty;subtotal+=jobs[Number(id)].price*qty;
+ }
+ const manual=productQuoteItems.some(item=>item.unitPrice===null);
+ const callout=count>0&&subtotal<SMALL_BOOKING_THRESHOLD?SMALL_BOOKING_CALLOUT:0;
+ return {count,subtotal,callout,total:subtotal+callout,manual,quoteCount:productQuoteItems.length};
 }
 function basketArtwork(label, imageUrl, kind){
  const wrap=document.createElement("div");wrap.className="basket-thumb";
@@ -687,11 +685,8 @@ function updateBasket(){
  const {count,total}=totals();document.getElementById("top-count").textContent=count;document.getElementById("bottom-count").textContent=count;document.getElementById("bottom-total").textContent=money(total);document.getElementById("bottom-bar").hidden=count===0;document.getElementById("send-booking").disabled=count===0;
  const box=document.getElementById("basket-content");
  if(!count){box.innerHTML='<div class="basket-empty"><b>Your basket is empty</b>Choose a job from the list and tap Add. You can combine as many different jobs as you need.</div>';return}
- const {subtotal,callout}=totals();
- box.innerHTML='<div class="basket-list" id="basket-list"></div><div class="basket-breakdown">'+
- '<div><span>Work subtotal</span><strong>'+money(subtotal)+'</strong></div>'+
- (callout?'<div><span>Call-out fee (bookings under £100)</span><strong>'+money(callout)+'</strong></div>':'')+
- '</div><div class="basket-summary"><span>'+count+' job item'+(count===1?'':'s')+' in total</span><strong>'+money(total)+(productQuoteItems.some(i=>i.unitPrice===null)?' + manual quote required':'')+'</strong></div>';
+ const pricing=totals();
+ box.innerHTML='<div class="basket-list" id="basket-list"></div><div class="basket-cost-breakdown"><div class="basket-cost-row"><span>Work subtotal ('+count+' item'+(count===1?'':'s')+')</span><strong>'+money(pricing.subtotal)+'</strong></div><div class="basket-cost-row"><span>Small-booking call-out'+(pricing.callout?' (under £100)':'')+'</span><strong>'+(pricing.callout?money(pricing.callout):'£0')+'</strong></div><div class="basket-cost-row final"><span>Estimated total</span><strong>'+money(pricing.total)+'</strong></div>'+(pricing.manual?'<div class="basket-cost-note">Manual-quote items are not included in the estimate. The final price and any applicable call-out fee will be confirmed before booking.</div>':'')+'</div>';
  const list=box.querySelector("#basket-list");
  Object.entries(basket).forEach(([id,qty])=>{
   const j=jobs[Number(id)],line=document.createElement("div");line.className="basket-line";
@@ -719,7 +714,7 @@ function updateBasket(){
   const controls=document.createElement("div");controls.className="line-controls";
   const remove=document.createElement("button");remove.className="remove";remove.textContent="Remove";remove.onclick=()=>{productQuoteItems.splice(index,1);updateBasket()};
   controls.append(remove);details.append(name,typeMeta);if(item.details)details.append(meta);details.append(controls);left.append(thumb,details);
-  const status=document.createElement("div");status.className="line-total";status.textContent=item.unitPrice===null?"Quote needed":money(Math.max(40,item.unitPrice)*item.qty);line.append(left,status);list.append(line);
+  const status=document.createElement("div");status.className="line-total";status.textContent=item.unitPrice===null?"Quote needed":money(Math.max(MIN_ASSEMBLY_PRICE,item.unitPrice)*item.qty);line.append(left,status);list.append(line);
  });
 }
 function openBasket(){document.getElementById("overlay").classList.add("open");document.getElementById("overlay").setAttribute("aria-hidden","false");document.body.style.overflow="hidden"}
@@ -740,10 +735,10 @@ contactRadios.forEach(r=>r.addEventListener("change",()=>{
  contactHint.textContent=contactCopy[document.querySelector('input[name="contact-method"]:checked').value];
 }));
 document.getElementById("booking-form").addEventListener("submit",e=>{
- e.preventDefault();const {count,total,subtotal,callout}=totals();if(!count)return;
- const f=new FormData(e.currentTarget),fixedLines=Object.entries(basket).map(([id,qty])=>{const j=jobs[Number(id)];return qty+" × "+j.name+" — "+money(j.price*qty)}).join("\n"),quoteLines=productQuoteItems.map(item=>item.qty+" × "+item.title+" ("+item.type+") — "+(item.unitPrice===null?"price to be confirmed":money(Math.max(40,item.unitPrice)*item.qty))+"\nProduct link: "+item.url+(item.details?"\nDetails: "+item.details:"")).join("\n\n"),lines=[fixedLines,quoteLines].filter(Boolean).join("\n\n");
+ e.preventDefault();const {count,total}=totals();if(!count)return;
+ const f=new FormData(e.currentTarget),fixedLines=Object.entries(basket).map(([id,qty])=>{const j=jobs[Number(id)];return qty+" × "+j.name+" — "+money(j.price*qty)}).join("\n"),quoteLines=productQuoteItems.map(item=>item.qty+" × "+item.title+" ("+item.type+") — "+(item.unitPrice===null?"price to be confirmed":money(item.unitPrice*item.qty))+"\nProduct link: "+item.url+(item.details?"\nDetails: "+item.details:"")).join("\n\n"),lines=[fixedLines,quoteLines].filter(Boolean).join("\n\n");
  const method=f.get("contact-method");
- const msg=["Hi Fox Fix & Finish, I'd like to request a booking for these jobs:","",lines,"","Work subtotal: "+money(subtotal),"Call-out fee: "+money(callout),"Estimated booking total: "+money(total),productQuoteItems.some(item=>item.unitPrice===null)?"Some furniture link items require a manual quote":"","Name: "+f.get("name"),"Phone: "+(f.get("phone")||"Not provided"),"Email: "+(f.get("email")||"Not provided"),"Postcode / area: "+f.get("postcode"),"Preferred date: "+(f.get("date")||"Flexible"),"Preferred contact: "+method,"Extra details: "+(f.get("notes")||"None"),"","Please let me know your availability and confirm the booking."].join("\n");
+ const msg=["Hi Fox Fix & Finish, I'd like to request a booking for these jobs:","",lines,"","Work subtotal: "+money(totals().subtotal),"Small-booking call-out: "+money(totals().callout),"Estimated total: "+money(total),productQuoteItems.some(item=>item.unitPrice===null)?"Manual-quote items are excluded from the estimate; final price to be confirmed.":"","Name: "+f.get("name"),"Phone: "+(f.get("phone")||"Not provided"),"Email: "+(f.get("email")||"Not provided"),"Postcode / area: "+f.get("postcode"),"Preferred date: "+(f.get("date")||"Flexible"),"Preferred contact: "+method,"Extra details: "+(f.get("notes")||"None"),"","Please let me know your availability and confirm the booking."].join("\n");
  const encoded=encodeURIComponent(msg);
  if(method==="whatsapp"){
   window.open("https://wa.me/"+PHONE+"?text="+encoded,"_blank","noopener");
@@ -767,7 +762,7 @@ const PRODUCT_RECOGNITION_ENDPOINT="https://bmgevnfomcyugvlgxmkd.supabase.co/fun
 const SUPABASE_PUBLISHABLE_KEY="sb_publishable_SgB0D4HiYLNQXOd5eAoG1Q_yKvsxPyB";
 let recognisedProduct=null;
 productQtyInput.addEventListener("input",()=>{
- if(recognisedProduct) productPricePreview.innerHTML="Estimated assembly price <strong>"+money(Math.max(40,recognisedProduct.unitPrice)*Math.max(1,Math.min(20,Number(productQtyInput.value)||1)))+"</strong><span>"+money(recognisedProduct.unitPrice)+" per item × "+Math.max(1,Math.min(20,Number(productQtyInput.value)||1))+". Estimate based on the identified furniture type.</span>";
+ if(recognisedProduct) productPricePreview.innerHTML="Estimated assembly price <strong>"+money(recognisedProduct.unitPrice*Math.max(1,Math.min(20,Number(productQtyInput.value)||1)))+"</strong><span>"+money(recognisedProduct.unitPrice)+" per item × "+Math.max(1,Math.min(20,Number(productQtyInput.value)||1))+". Estimate based on the identified furniture type.</span>";
 });
 function safeText(value){return String(value??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
 document.getElementById("product-link-form").addEventListener("submit",async e=>{
@@ -786,7 +781,7 @@ document.getElementById("product-link-form").addEventListener("submit",async e=>
    throw new Error("The website still needs its Supabase publishable key added before product links can be checked.");
   }
   const lookupController=new AbortController();
-  const lookupTimer=setTimeout(()=>lookupController.abort(),14000);
+  const lookupTimer=setTimeout(()=>lookupController.abort(),38000);
   let response,result;
   try{
    response=await fetch(PRODUCT_RECOGNITION_ENDPOINT,{method:"POST",headers:{"Content-Type":"application/json","apikey":SUPABASE_PUBLISHABLE_KEY},body:JSON.stringify({url:url.href}),signal:lookupController.signal});
@@ -798,33 +793,22 @@ document.getElementById("product-link-form").addEventListener("submit",async e=>
   if(!result.identified||!Number.isFinite(Number(result.unitPrice))){
    productPricePreview.innerHTML="<strong>Price to be confirmed</strong><span>We couldn't identify the assembly type confidently enough to give you a reliable price.</span>";
    productFeedback.textContent=result.message||"Please add the product to a manual quote. We’ll check the exact item before confirming a price.";
-   recognisedProduct={manual:true,url:url.href,title:result.title||"Furniture item",type:result.type||"Furniture — manual quote",qty,details:document.getElementById("product-details").value.trim(),unitPrice:null,image:result.image||result.imageUrl||result.image_url||result.thumbnail||""};
+   recognisedProduct={manual:true,url:url.href,title:result.title||"Furniture item",type:result.type||"Furniture — manual quote",qty,details:document.getElementById("product-details").value.trim(),unitPrice:null,image:result.image||""};
    productSubmit.disabled=false;productSubmit.textContent="Add item for a manual quote ↗";
    return;
   }
-  recognisedProduct={manual:false,url:url.href,title:result.title,type:result.type,qty,details:document.getElementById("product-details").value.trim(),unitPrice:Math.max(40,Number(result.unitPrice)),image:result.image||result.imageUrl||result.image_url||result.thumbnail||"",confidence:result.confidence||"medium",reason:result.reason||""};
-  const productImage=recognisedProduct.image;
-  const img=productImage?'<img src="'+safeText(productImage)+'" alt="Product image" onerror="this.style.display=\'none\'">':'';
+  recognisedProduct={manual:false,url:url.href,title:result.title,type:result.type,qty,details:document.getElementById("product-details").value.trim(),unitPrice:Math.max(MIN_ASSEMBLY_PRICE,Number(result.unitPrice)),image:result.image||"",confidence:result.confidence||"medium",reason:result.reason||""};
+  const img=typeof result.image==="string"&&/^https:\/\//i.test(result.image)?'<img src="'+safeText(result.image)+'" alt="Product photo">':'';
   detectedCard.innerHTML=img+'<div><strong>'+safeText(result.title)+'</strong><small>'+safeText(result.type)+' · '+safeText(result.reason||"Identified from the product page")+'</small><small>Estimate only — final price confirmed after checking the item details.</small></div>';
   detectedCard.hidden=false;
+  const previewImage=detectedCard.querySelector("img");
+  if(previewImage) previewImage.addEventListener("error",()=>{previewImage.remove();});
   productPricePreview.innerHTML="Estimated assembly price <strong>"+money(recognisedProduct.unitPrice*qty)+"</strong><span>"+money(recognisedProduct.unitPrice)+" per item × "+qty+". Based on your standard Fox Fix & Finish rate for "+safeText(result.type)+".</span>";
   productFeedback.textContent="Item identified. Check the product details, then add it to your basket.";
   productSubmit.disabled=false;productSubmit.textContent="Add identified item to basket ↗";
  }catch(err){
-  // Known IKEA product: never lose a reliable quote because the retailer or function is slow.
-  const isKnownBrimnes=/^(?:www\.)?ikea\.com$/i.test(url.hostname) &&
-    (/40407922/i.test(url.pathname) || (/brimnes/i.test(url.pathname) && /wardrobe/i.test(url.pathname) && /3.doors/i.test(url.pathname)));
-  if(isKnownBrimnes){
-   recognisedProduct={manual:false,url:url.href,title:"IKEA BRIMNES wardrobe with 3 doors",type:"3-door wardrobe",qty,details:document.getElementById("product-details").value.trim(),unitPrice:85,image:"",confidence:"high"};
-   detectedCard.innerHTML='<div class="product-image-unavailable" aria-hidden="true">🗄️</div><div><strong>IKEA BRIMNES wardrobe with 3 doors</strong><small>3-door wardrobe · Recognised from IKEA product code</small><small>Product photo unavailable; the assembly price is still shown.</small></div>';
-   detectedCard.hidden=false;
-   productPricePreview.innerHTML="Estimated assembly price <strong>"+money(85*qty)+"</strong><span>£85 per wardrobe × "+qty+". Product recognised from the IKEA link.</span>";
-   productFeedback.textContent="IKEA wardrobe recognised. You can add it to your basket now.";
-   productSubmit.disabled=false;productSubmit.textContent="Add identified item to basket ↗";
-   return;
-  }
   productPricePreview.innerHTML="<strong>Price to be confirmed</strong><span>The product lookup timed out or the retailer did not respond. You can still request a manual quote.</span>";
-  productFeedback.textContent=(err.name==="AbortError"?"Product lookup took too long.":"Product lookup failed: "+(err.message||"Please try again."))+" You can still add it for a manual quote.";
+  productFeedback.textContent=(err.name==="AbortError"?"Product lookup timed out after 38 seconds.":"Product lookup failed: "+(err.message||"Please try again."))+" You can still add it for a manual quote.";
   recognisedProduct={manual:true,url:url.href,title:"Furniture item — details to check",type:"Furniture — manual quote",qty,details:document.getElementById("product-details").value.trim(),unitPrice:null,image:""};
   productSubmit.disabled=false;productSubmit.textContent="Add item for a manual quote ↗";
  }
