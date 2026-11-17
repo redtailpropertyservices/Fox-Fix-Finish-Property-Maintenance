@@ -421,25 +421,6 @@ footer{background:#fffaf5!important;padding:28px 18px!important;line-height:1.9!
  .booking .two{grid-template-columns:1fr!important}
 }
 
-
-/* Safe mobile and booking refinements (no product lookup changes). */
-@media (max-width: 760px) {
-  .site-header .basket-top {padding:6px 8px!important;min-height:34px!important;font-size:9px!important;gap:5px!important;border-radius:9px!important;max-width:105px!important}
-  .site-header .basket-count {width:18px!important;height:18px!important;font-size:9px!important;flex-shrink:0}
-  input, select, textarea, .booking input, .booking textarea,
-  .product-link-form input, .product-link-form select, .product-link-form textarea,
-  .service-card select, .quick-book select {font-size:16px!important}
-  .booking .two {grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;gap:10px!important;align-items:start!important}
-  .booking .two > div {min-width:0!important;display:flex;flex-direction:column}
-  .booking input[type=date] {display:block;width:100%!important;min-width:0!important;max-width:100%!important;min-height:46px;box-sizing:border-box;-webkit-appearance:none;appearance:none}
-}
-@media (max-width:380px) {.booking .two {grid-template-columns:1fr!important}}
-.basket-cost-breakdown{margin-top:12px;border-top:1px solid var(--line);padding-top:12px;display:grid;gap:8px}
-.basket-cost-row{display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:12px}
-.basket-cost-row strong{font:800 13px Manrope}
-.basket-cost-row.final{padding-top:10px;border-top:1px solid var(--line);font-weight:800}
-.basket-cost-row.final strong{font-size:22px;color:var(--orange-dark)}
-.basket-cost-note{font-size:10px;color:var(--muted);line-height:1.5}
 </style>
 </head>
 <body>
@@ -598,13 +579,6 @@ const jobs=[
 {cat:"assembly",name:"Storage unit",price:30,standard:30,unit:"per item"},
 {cat:"assembly",name:"Secure one item of furniture to wall",price:15,standard:15,unit:"per item"}
 ];
-// Display and basket prices only. Product recognition stays in the original Supabase function.
-const MIN_ASSEMBLY_PRICE=40;
-const SMALL_BOOKING_THRESHOLD=100;
-const SMALL_BOOKING_CALLOUT=25;
-for(const job of jobs){
- if(job.cat==="assembly") job.price=Math.max(MIN_ASSEMBLY_PRICE,job.price);
-}
 let basket={};
 let productQuoteItems=[];
 const money=n=>new Intl.NumberFormat("en-GB",{style:"currency",currency:"GBP",maximumFractionDigits:0}).format(n);
@@ -639,19 +613,7 @@ function updateSelection(cat){
  picker.info.innerHTML="Fixed price<strong>"+money(job.price)+"</strong><span>"+job.unit+"</span>";
  picker.button.disabled=false;
 }
-function totals(){
- let count=0,subtotal=0;
- for(const item of productQuoteItems){
-  count+=item.qty;
-  if(item.unitPrice!==null) subtotal+=Math.max(MIN_ASSEMBLY_PRICE,Number(item.unitPrice)||0)*item.qty;
- }
- for(const [id,qty] of Object.entries(basket)){
-  count+=qty;subtotal+=jobs[Number(id)].price*qty;
- }
- const manual=productQuoteItems.some(item=>item.unitPrice===null);
- const callout=count>0&&subtotal<SMALL_BOOKING_THRESHOLD?SMALL_BOOKING_CALLOUT:0;
- return {count,subtotal,callout,total:subtotal+callout,manual,quoteCount:productQuoteItems.length};
-}
+function totals(){let count=productQuoteItems.reduce((n,item)=>n+item.qty,0),total=productQuoteItems.reduce((n,item)=>n+(item.unitPrice===null?0:item.unitPrice*item.qty),0);Object.entries(basket).forEach(([id,qty])=>{count+=qty;total+=jobs[Number(id)].price*qty});return{count,total,quoteCount:productQuoteItems.length}}
 function basketArtwork(label, imageUrl, kind){
  const wrap=document.createElement("div");wrap.className="basket-thumb";
  if(imageUrl){
@@ -685,8 +647,7 @@ function updateBasket(){
  const {count,total}=totals();document.getElementById("top-count").textContent=count;document.getElementById("bottom-count").textContent=count;document.getElementById("bottom-total").textContent=money(total);document.getElementById("bottom-bar").hidden=count===0;document.getElementById("send-booking").disabled=count===0;
  const box=document.getElementById("basket-content");
  if(!count){box.innerHTML='<div class="basket-empty"><b>Your basket is empty</b>Choose a job from the list and tap Add. You can combine as many different jobs as you need.</div>';return}
- const pricing=totals();
- box.innerHTML='<div class="basket-list" id="basket-list"></div><div class="basket-cost-breakdown"><div class="basket-cost-row"><span>Work subtotal ('+count+' item'+(count===1?'':'s')+')</span><strong>'+money(pricing.subtotal)+'</strong></div><div class="basket-cost-row"><span>Small-booking call-out'+(pricing.callout?' (under £100)':'')+'</span><strong>'+(pricing.callout?money(pricing.callout):'£0')+'</strong></div><div class="basket-cost-row final"><span>Estimated total</span><strong>'+money(pricing.total)+'</strong></div>'+(pricing.manual?'<div class="basket-cost-note">Manual-quote items are not included in the estimate. The final price and any applicable call-out fee will be confirmed before booking.</div>':'')+'</div>';
+ box.innerHTML='<div class="basket-list" id="basket-list"></div><div class="basket-summary"><span>'+count+' job item'+(count===1?"":"s")+' in total</span><strong>'+money(total)+(productQuoteItems.some(i=>i.unitPrice===null)?' + manual quote required':'')+'</strong></div>';
  const list=box.querySelector("#basket-list");
  Object.entries(basket).forEach(([id,qty])=>{
   const j=jobs[Number(id)],line=document.createElement("div");line.className="basket-line";
@@ -714,7 +675,7 @@ function updateBasket(){
   const controls=document.createElement("div");controls.className="line-controls";
   const remove=document.createElement("button");remove.className="remove";remove.textContent="Remove";remove.onclick=()=>{productQuoteItems.splice(index,1);updateBasket()};
   controls.append(remove);details.append(name,typeMeta);if(item.details)details.append(meta);details.append(controls);left.append(thumb,details);
-  const status=document.createElement("div");status.className="line-total";status.textContent=item.unitPrice===null?"Quote needed":money(Math.max(MIN_ASSEMBLY_PRICE,item.unitPrice)*item.qty);line.append(left,status);list.append(line);
+  const status=document.createElement("div");status.className="line-total";status.textContent=item.unitPrice===null?"Quote needed":money(item.unitPrice*item.qty);line.append(left,status);list.append(line);
  });
 }
 function openBasket(){document.getElementById("overlay").classList.add("open");document.getElementById("overlay").setAttribute("aria-hidden","false");document.body.style.overflow="hidden"}
@@ -738,7 +699,7 @@ document.getElementById("booking-form").addEventListener("submit",e=>{
  e.preventDefault();const {count,total}=totals();if(!count)return;
  const f=new FormData(e.currentTarget),fixedLines=Object.entries(basket).map(([id,qty])=>{const j=jobs[Number(id)];return qty+" × "+j.name+" — "+money(j.price*qty)}).join("\n"),quoteLines=productQuoteItems.map(item=>item.qty+" × "+item.title+" ("+item.type+") — "+(item.unitPrice===null?"price to be confirmed":money(item.unitPrice*item.qty))+"\nProduct link: "+item.url+(item.details?"\nDetails: "+item.details:"")).join("\n\n"),lines=[fixedLines,quoteLines].filter(Boolean).join("\n\n");
  const method=f.get("contact-method");
- const msg=["Hi Fox Fix & Finish, I'd like to request a booking for these jobs:","",lines,"","Work subtotal: "+money(totals().subtotal),"Small-booking call-out: "+money(totals().callout),"Estimated total: "+money(total),productQuoteItems.some(item=>item.unitPrice===null)?"Manual-quote items are excluded from the estimate; final price to be confirmed.":"","Name: "+f.get("name"),"Phone: "+(f.get("phone")||"Not provided"),"Email: "+(f.get("email")||"Not provided"),"Postcode / area: "+f.get("postcode"),"Preferred date: "+(f.get("date")||"Flexible"),"Preferred contact: "+method,"Extra details: "+(f.get("notes")||"None"),"","Please let me know your availability and confirm the booking."].join("\n");
+ const msg=["Hi Fox Fix & Finish, I'd like to request a booking for these jobs:","",lines,"","Fixed-price items subtotal: "+money(total),productQuoteItems.some(item=>item.unitPrice===null)?"Some furniture link items require a manual quote":"","Name: "+f.get("name"),"Phone: "+(f.get("phone")||"Not provided"),"Email: "+(f.get("email")||"Not provided"),"Postcode / area: "+f.get("postcode"),"Preferred date: "+(f.get("date")||"Flexible"),"Preferred contact: "+method,"Extra details: "+(f.get("notes")||"None"),"","Please let me know your availability and confirm the booking."].join("\n");
  const encoded=encodeURIComponent(msg);
  if(method==="whatsapp"){
   window.open("https://wa.me/"+PHONE+"?text="+encoded,"_blank","noopener");
@@ -797,30 +758,14 @@ document.getElementById("product-link-form").addEventListener("submit",async e=>
    productSubmit.disabled=false;productSubmit.textContent="Add item for a manual quote ↗";
    return;
   }
-  recognisedProduct={manual:false,url:url.href,title:result.title,type:result.type,qty,details:document.getElementById("product-details").value.trim(),unitPrice:Math.max(MIN_ASSEMBLY_PRICE,Number(result.unitPrice)),image:result.image||"",confidence:result.confidence||"medium",reason:result.reason||""};
-  const img=typeof result.image==="string"&&/^https:\/\//i.test(result.image)?'<img src="'+safeText(result.image)+'" alt="Product photo">':'';
+  recognisedProduct={manual:false,url:url.href,title:result.title,type:result.type,qty,details:document.getElementById("product-details").value.trim(),unitPrice:Number(result.unitPrice),image:result.image||"",confidence:result.confidence||"medium",reason:result.reason||""};
+  const img=result.image?'<img src="'+safeText(result.image)+'" alt="">':'';
   detectedCard.innerHTML=img+'<div><strong>'+safeText(result.title)+'</strong><small>'+safeText(result.type)+' · '+safeText(result.reason||"Identified from the product page")+'</small><small>Estimate only — final price confirmed after checking the item details.</small></div>';
   detectedCard.hidden=false;
-  const previewImage=detectedCard.querySelector("img");
-  if(previewImage) previewImage.addEventListener("error",()=>{previewImage.remove();});
   productPricePreview.innerHTML="Estimated assembly price <strong>"+money(recognisedProduct.unitPrice*qty)+"</strong><span>"+money(recognisedProduct.unitPrice)+" per item × "+qty+". Based on your standard Fox Fix & Finish rate for "+safeText(result.type)+".</span>";
   productFeedback.textContent="Item identified. Check the product details, then add it to your basket.";
   productSubmit.disabled=false;productSubmit.textContent="Add identified item to basket ↗";
  }catch(err){
-  // Conservative URL-based fallback for this specific DUSK product only.
-  // No changes to IKEA/B&Q recognition or the Supabase request above.
-  const isDuskDrawerChest=(url.hostname==="dusk.com"||url.hostname.endsWith(".dusk.com")) &&
-    /^\/products\/posy-bobbin-6-drawer-chest-light-wood\/?$/i.test(url.pathname);
-  if(isDuskDrawerChest){
-   const title="DUSK Posy Bobbin 6 Drawer Chest - Light Wood";
-   recognisedProduct={manual:false,url:url.href,title,type:"Chest of drawers",qty,details:document.getElementById("product-details").value.trim(),unitPrice:40,image:""};
-   detectedCard.innerHTML='<div><strong>'+safeText(title)+'</strong><small>Chest of drawers · Identified from the product link</small><small>Provisional estimate — product photo unavailable until verified</small></div>';
-   detectedCard.hidden=false;
-   productPricePreview.innerHTML='Estimated assembly price <strong>'+money(40*qty)+'</strong><span>£40 per item × '+qty+'. £25 call-out fee applies if the basket subtotal is below £100.</span>';
-   productFeedback.textContent="The retailer lookup did not finish, but this specific DUSK chest has been identified from its product link. Please check the item before booking.";
-   productSubmit.disabled=false;productSubmit.textContent="Add identified item to basket ↗";
-   return;
-  }
   productPricePreview.innerHTML="<strong>Price to be confirmed</strong><span>The product lookup timed out or the retailer did not respond. You can still request a manual quote.</span>";
   productFeedback.textContent=(err.name==="AbortError"?"Product lookup timed out after 38 seconds.":"Product lookup failed: "+(err.message||"Please try again."))+" You can still add it for a manual quote.";
   recognisedProduct={manual:true,url:url.href,title:"Furniture item — details to check",type:"Furniture — manual quote",qty,details:document.getElementById("product-details").value.trim(),unitPrice:null,image:""};
