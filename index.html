@@ -557,27 +557,27 @@ const jobs=[
 {cat:"mount",name:"Remove existing blind or pole",price:12,standard:12,unit:"per item"},
 {cat:"mount",name:"Install curtain tiebacks (pair)",price:20,standard:20,unit:"per pair"},
 {cat:"mount",name:"Install curtain holdbacks (pair)",price:20,standard:20,unit:"per pair"},
-{cat:"assembly",name:"Bedside table",price:20,standard:20,unit:"per item"},
-{cat:"assembly",name:"Small desk",price:30,standard:30,unit:"per item"},
-{cat:"assembly",name:"Large office desk",price:45,standard:45,unit:"per item"},
-{cat:"assembly",name:"Gaming desk",price:45,standard:45,unit:"per item"},
-{cat:"assembly",name:"Chest of drawers (up to 6 drawers)",price:40,standard:40,unit:"per item"},
-{cat:"assembly",name:"2-door wardrobe",price:65,standard:65,unit:"per item"},
-{cat:"assembly",name:"3-door wardrobe",price:85,standard:85,unit:"per item"},
-{cat:"assembly",name:"4-door wardrobe",price:110,standard:110,unit:"per item"},
-{cat:"assembly",name:"Sliding-door wardrobe",price:120,standard:120,unit:"per item"},
-{cat:"assembly",name:"Bookcase",price:30,standard:30,unit:"per item"},
-{cat:"assembly",name:"TV unit",price:35,standard:35,unit:"per item"},
-{cat:"assembly",name:"Coffee table",price:20,standard:20,unit:"per item"},
-{cat:"assembly",name:"Dining table",price:40,standard:40,unit:"per item"},
-{cat:"assembly",name:"Dining chair",price:12,standard:12,unit:"per chair"},
-{cat:"assembly",name:"Standard bed frame",price:45,standard:45,unit:"per item"},
-{cat:"assembly",name:"Ottoman storage bed",price:75,standard:75,unit:"per item"},
-{cat:"assembly",name:"Bunk bed",price:90,standard:90,unit:"per item"},
-{cat:"assembly",name:"Sofa bed",price:45,standard:45,unit:"per item"},
-{cat:"assembly",name:"Shoe cabinet",price:25,standard:25,unit:"per item"},
-{cat:"assembly",name:"Storage unit",price:30,standard:30,unit:"per item"},
-{cat:"assembly",name:"Secure one item of furniture to wall",price:15,standard:15,unit:"per item"}
+{cat:"assembly",name:"Bedside table",price:40,standard:40,unit:"per item"},
+{cat:"assembly",name:"Small desk",price:45,standard:45,unit:"per item"},
+{cat:"assembly",name:"Large office desk",price:65,standard:65,unit:"per item"},
+{cat:"assembly",name:"Gaming desk",price:65,standard:65,unit:"per item"},
+{cat:"assembly",name:"Chest of drawers (up to 6 drawers)",price:60,standard:60,unit:"per item"},
+{cat:"assembly",name:"2-door wardrobe",price:85,standard:85,unit:"per item"},
+{cat:"assembly",name:"3-door wardrobe",price:110,standard:110,unit:"per item"},
+{cat:"assembly",name:"4-door wardrobe",price:145,standard:145,unit:"per item"},
+{cat:"assembly",name:"Sliding-door wardrobe",price:160,standard:160,unit:"per item"},
+{cat:"assembly",name:"Bookcase",price:45,standard:45,unit:"per item"},
+{cat:"assembly",name:"TV unit",price:50,standard:50,unit:"per item"},
+{cat:"assembly",name:"Coffee table",price:40,standard:40,unit:"per item"},
+{cat:"assembly",name:"Dining table",price:55,standard:55,unit:"per item"},
+{cat:"assembly",name:"Dining chair",price:40,standard:40,unit:"per chair"},
+{cat:"assembly",name:"Standard bed frame",price:65,standard:65,unit:"per item"},
+{cat:"assembly",name:"Ottoman storage bed",price:110,standard:110,unit:"per item"},
+{cat:"assembly",name:"Bunk bed",price:130,standard:130,unit:"per item"},
+{cat:"assembly",name:"Sofa bed",price:65,standard:65,unit:"per item"},
+{cat:"assembly",name:"Shoe cabinet",price:45,standard:45,unit:"per item"},
+{cat:"assembly",name:"Storage unit",price:50,standard:50,unit:"per item"},
+{cat:"assembly",name:"Secure one item of furniture to wall",price:40,standard:40,unit:"per item"}
 ];
 let basket={};
 let productQuoteItems=[];
@@ -613,7 +613,7 @@ function updateSelection(cat){
  picker.info.innerHTML="Fixed price<strong>"+money(job.price)+"</strong><span>"+job.unit+"</span>";
  picker.button.disabled=false;
 }
-function totals(){let count=productQuoteItems.reduce((n,item)=>n+item.qty,0),total=productQuoteItems.reduce((n,item)=>n+(item.unitPrice===null?0:item.unitPrice*item.qty),0);Object.entries(basket).forEach(([id,qty])=>{count+=qty;total+=jobs[Number(id)].price*qty});return{count,total,quoteCount:productQuoteItems.length}}
+function totals(){let count=productQuoteItems.reduce((n,item)=>n+item.qty,0),total=productQuoteItems.reduce((n,item)=>n+(item.unitPrice===null?0:item.unitPrice*item.qty),0);Object.entries(basket).forEach(([id,qty])=>{count+=qty;total+=jobs[Number(id)].price*qty});const callout=count>0&&total<100?25:0;return{count,total:total+callout,subtotal:total,callout,quoteCount:productQuoteItems.length}}
 function basketArtwork(label, imageUrl, kind){
  const wrap=document.createElement("div");wrap.className="basket-thumb";
  if(imageUrl){
@@ -644,10 +644,11 @@ function basketIcon(value){
  return "🛠️";
 }
 function updateBasket(){
- const {count,total}=totals();document.getElementById("top-count").textContent=count;document.getElementById("bottom-count").textContent=count;document.getElementById("bottom-total").textContent=money(total);document.getElementById("bottom-bar").hidden=count===0;document.getElementById("send-booking").disabled=count===0;
+ const {count,total,subtotal,callout}=totals();document.getElementById("top-count").textContent=count;document.getElementById("bottom-count").textContent=count;document.getElementById("bottom-total").textContent=money(total);document.getElementById("bottom-bar").hidden=count===0;document.getElementById("send-booking").disabled=count===0;
  const box=document.getElementById("basket-content");
  if(!count){box.innerHTML='<div class="basket-empty"><b>Your basket is empty</b>Choose a job from the list and tap Add. You can combine as many different jobs as you need.</div>';return}
  box.innerHTML='<div class="basket-list" id="basket-list"></div><div class="basket-summary"><span>'+count+' job item'+(count===1?"":"s")+' in total</span><strong>'+money(total)+(productQuoteItems.some(i=>i.unitPrice===null)?' + manual quote required':'')+'</strong></div>';
+ if(callout){const summary=box.querySelector(".basket-summary");summary.insertAdjacentHTML("beforebegin",'<div class="basket-summary"><span>Jobs subtotal</span><strong>'+money(subtotal)+'</strong></div><div class="basket-summary"><span>Small booking callout (under £100)</span><strong>£25</strong></div>');}
  const list=box.querySelector("#basket-list");
  Object.entries(basket).forEach(([id,qty])=>{
   const j=jobs[Number(id)],line=document.createElement("div");line.className="basket-line";
@@ -699,7 +700,7 @@ document.getElementById("booking-form").addEventListener("submit",e=>{
  e.preventDefault();const {count,total}=totals();if(!count)return;
  const f=new FormData(e.currentTarget),fixedLines=Object.entries(basket).map(([id,qty])=>{const j=jobs[Number(id)];return qty+" × "+j.name+" — "+money(j.price*qty)}).join("\n"),quoteLines=productQuoteItems.map(item=>item.qty+" × "+item.title+" ("+item.type+") — "+(item.unitPrice===null?"price to be confirmed":money(item.unitPrice*item.qty))+"\nProduct link: "+item.url+(item.details?"\nDetails: "+item.details:"")).join("\n\n"),lines=[fixedLines,quoteLines].filter(Boolean).join("\n\n");
  const method=f.get("contact-method");
- const msg=["Hi Fox Fix & Finish, I'd like to request a booking for these jobs:","",lines,"","Fixed-price items subtotal: "+money(total),productQuoteItems.some(item=>item.unitPrice===null)?"Some furniture link items require a manual quote":"","Name: "+f.get("name"),"Phone: "+(f.get("phone")||"Not provided"),"Email: "+(f.get("email")||"Not provided"),"Postcode / area: "+f.get("postcode"),"Preferred date: "+(f.get("date")||"Flexible"),"Preferred contact: "+method,"Extra details: "+(f.get("notes")||"None"),"","Please let me know your availability and confirm the booking."].join("\n");
+ const msg=["Hi Fox Fix & Finish, I'd like to request a booking for these jobs:","",lines,"","Jobs subtotal: "+money(totals().subtotal),"Small booking callout: "+money(totals().callout),"Estimated total: "+money(total),productQuoteItems.some(item=>item.unitPrice===null)?"Some furniture link items require a manual quote":"","Name: "+f.get("name"),"Phone: "+(f.get("phone")||"Not provided"),"Email: "+(f.get("email")||"Not provided"),"Postcode / area: "+f.get("postcode"),"Preferred date: "+(f.get("date")||"Flexible"),"Preferred contact: "+method,"Extra details: "+(f.get("notes")||"None"),"","Please let me know your availability and confirm the booking."].join("\n");
  const encoded=encodeURIComponent(msg);
  if(method==="whatsapp"){
   window.open("https://wa.me/"+PHONE+"?text="+encoded,"_blank","noopener");
@@ -710,7 +711,7 @@ document.getElementById("booking-form").addEventListener("submit",e=>{
   window.location.href="sms:"+PHONE+"?&body="+encodeURIComponent(callMsg+"\n\n"+msg);
   alert("Your text app will open with a call-back request and your booking details. Send it to complete your request.");
  }else{
-  window.location.href="mailto:?subject="+encodeURIComponent("Fox Fix & Finish booking request")+"&body="+encoded;
+  window.location.href="mailto:quotes@foxfixfinish.co.uk?subject="+encodeURIComponent("Fox Fix & Finish booking request")+"&body="+encoded;
  }
 });
 const productQtyInput=document.getElementById("product-quantity");
@@ -722,12 +723,23 @@ const PRODUCT_RECOGNITION_ENDPOINT="https://bmgevnfomcyugvlgxmkd.supabase.co/fun
 // Supabase publishable key: replace the placeholder with the project's sb_publishable_ key.
 const SUPABASE_PUBLISHABLE_KEY="sb_publishable_SgB0D4HiYLNQXOd5eAoG1Q_yKvsxPyB";
 let recognisedProduct=null;
+document.getElementById("product-url").addEventListener("input",()=>{recognisedProduct=null;detectedCard.hidden=true;productSubmit.textContent="Identify item and calculate price ↗";});
 productQtyInput.addEventListener("input",()=>{
  if(recognisedProduct) productPricePreview.innerHTML="Estimated assembly price <strong>"+money(recognisedProduct.unitPrice*Math.max(1,Math.min(20,Number(productQtyInput.value)||1)))+"</strong><span>"+money(recognisedProduct.unitPrice)+" per item × "+Math.max(1,Math.min(20,Number(productQtyInput.value)||1))+". Estimate based on the identified furniture type.</span>";
 });
 function safeText(value){return String(value??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
 document.getElementById("product-link-form").addEventListener("submit",async e=>{
  e.preventDefault();
+ if(recognisedProduct){
+  const item={...recognisedProduct,qty:Math.max(1,Math.min(20,Number(productQtyInput.value)||1))};
+  productQuoteItems.push(item);updateBasket();
+  document.getElementById("product-link-form").reset();productQtyInput.value="1";
+  recognisedProduct=null;detectedCard.hidden=true;
+  productPricePreview.textContent="Paste another product link to identify another item.";
+  productFeedback.textContent="Added to your basket. You can add another product link or continue to booking.";
+  productSubmit.disabled=false;productSubmit.textContent="Identify item and calculate price ↗";
+  return;
+ }
  const urlField=document.getElementById("product-url");
  const qty=Math.max(1,Math.min(20,Number(productQtyInput.value)||1));
  let url;
@@ -758,7 +770,7 @@ document.getElementById("product-link-form").addEventListener("submit",async e=>
    productSubmit.disabled=false;productSubmit.textContent="Add item for a manual quote ↗";
    return;
   }
-  recognisedProduct={manual:false,url:url.href,title:result.title,type:result.type,qty,details:document.getElementById("product-details").value.trim(),unitPrice:Number(result.unitPrice),image:result.image||"",confidence:result.confidence||"medium",reason:result.reason||""};
+  recognisedProduct={manual:false,url:url.href,title:result.title,type:result.type,qty,details:document.getElementById("product-details").value.trim(),unitPrice:Math.max(40,Number(result.unitPrice)),image:result.image||"",confidence:result.confidence||"medium",reason:result.reason||""};
   const img=result.image?'<img src="'+safeText(result.image)+'" alt="">':'';
   detectedCard.innerHTML=img+'<div><strong>'+safeText(result.title)+'</strong><small>'+safeText(result.type)+' · '+safeText(result.reason||"Identified from the product page")+'</small><small>Estimate only — final price confirmed after checking the item details.</small></div>';
   detectedCard.hidden=false;
@@ -771,19 +783,6 @@ document.getElementById("product-link-form").addEventListener("submit",async e=>
   recognisedProduct={manual:true,url:url.href,title:"Furniture item — details to check",type:"Furniture — manual quote",qty,details:document.getElementById("product-details").value.trim(),unitPrice:null,image:""};
   productSubmit.disabled=false;productSubmit.textContent="Add item for a manual quote ↗";
  }
-});
-productSubmit.addEventListener("click",e=>{
- if(!recognisedProduct)return;
- e.preventDefault();
- const item={...recognisedProduct,qty:Math.max(1,Math.min(20,Number(productQtyInput.value)||1))};
- productQuoteItems.push(item);
- updateBasket();
- document.getElementById("product-link-form").reset();productQtyInput.value="1";
- recognisedProduct=null;detectedCard.hidden=true;
- productPricePreview.textContent="Paste another product link to identify another item.";
- productFeedback.textContent="Added to your basket. You can add another product link or continue to booking.";
- productSubmit.disabled=false;productSubmit.textContent="Identify item and calculate price ↗";
- document.getElementById("bottom-bar").hidden=false;
 });
 const dateInput=document.getElementById("customer-date");const today=new Date();dateInput.min=new Date(today.getTime()-today.getTimezoneOffset()*60000).toISOString().slice(0,10);
 document.getElementById("booking-form").addEventListener("change",e=>{
