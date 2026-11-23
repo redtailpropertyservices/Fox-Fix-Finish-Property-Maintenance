@@ -341,6 +341,28 @@ html.holiday-live .hero::before{
 .footer-email:focus-visible{outline:3px solid #f87318;outline-offset:3px}
 @media(max-width:610px){.footer-contacts{align-items:flex-start;width:100%;gap:8px}}
 
+
+/* Privacy notice is shown only when its footer or booking link is clicked. */
+.fox-privacy-dialog{
+  width:min(650px,calc(100vw - 32px));max-height:min(82dvh,820px);
+  margin:auto;padding:clamp(20px,4vw,32px);
+  background:#fff;color:var(--ink);border:1px solid var(--line);
+  border-radius:20px;box-shadow:0 22px 75px rgba(20,15,12,.23);
+  overflow-y:auto;overscroll-behavior:contain;
+}
+.fox-privacy-dialog::backdrop{background:rgba(28,23,21,.62);backdrop-filter:blur(3px)}
+.fox-privacy-dialog .privacy-body{padding-right:10px;line-height:1.72;font-size:14px;color:#5f5953}
+.fox-privacy-dialog .privacy-body h2{font-size:25px;color:#221e1a;margin:0 50px 16px 0}
+.fox-privacy-dialog .privacy-body h3{font-size:15px;color:#221e1a;margin:22px 0 8px}
+.fox-privacy-dialog .privacy-body p{margin:0 0 13px}
+.fox-privacy-dialog .privacy-body a{text-decoration:underline;color:var(--orange-dark)}
+.fox-privacy-close{position:sticky;top:0;float:right;display:grid;place-items:center;
+  width:40px;height:40px;margin:-6px -6px 2px 10px;background:#fff;
+  color:#322c27;border:1px solid var(--line);border-radius:100%;font-size:27px;
+  line-height:1;z-index:2}
+.fox-privacy-close:hover,.fox-privacy-close:focus-visible{border-color:var(--orange);color:var(--orange-dark)}
+@media(max-width:610px){.fox-privacy-dialog{max-height:86dvh;padding:22px 18px}.fox-privacy-dialog .privacy-body{padding-right:0}}
+
 </style>
 
 </head>
@@ -419,13 +441,13 @@ html.holiday-live .hero::before{
     </div>
   </main>
 
-<details id="privacy-notice" class="privacy-details"><summary>Privacy notice</summary><div class="privacy-body">
-<h2>Privacy notice</h2><p>Fox Fix &amp; Finish Property Maintenance processes the information you send through our website to review enquiries, prepare estimates, arrange appointments and respond to customers.</p>
+<dialog id="privacy-notice" class="fox-privacy-dialog" aria-labelledby="privacyTitle"><button type="button" class="fox-privacy-close" id="closePrivacy" aria-label="Close privacy notice">×</button><div class="privacy-body">
+<h2 id="privacyTitle">Privacy notice</h2><p>Fox Fix &amp; Finish Property Maintenance processes the information you send through our website to review enquiries, prepare estimates, arrange appointments and respond to customers.</p>
 <h3>Information we collect</h3><p>When you submit a request we collect your name, phone number, optional email address, postcode, preferred date and time, job description, linked product details and estimated basket information.</p>
 <h3>How we use it</h3><p>We use this information to respond to your enquiry, provide a quotation, arrange the requested services and keep appropriate business records. The legal basis is taking steps at your request before entering into a contract and, where relevant, legitimate business interests or legal obligations.</p>
 <h3>Where information is handled</h3><p>Your booking message opens in your selected messaging app, where you choose whether to send it. These messages are handled by your chosen messaging provider and by us after receipt. Product-link recognition may use Supabase and third-party services to process public retailer-page information, not your personal contact details. The website stores basket details in your browser to avoid losing your selections. External retailer product images may load from those retailers.</p>
 <h3>Retention and your rights</h3><p>We keep customer details only as long as reasonably needed for your enquiry, providing services and applicable recordkeeping obligations. You can request access, correction or deletion of eligible information by contacting us at <a href="mailto:quotes@foxfixfinish.co.uk">quotes@foxfixfinish.co.uk</a>. You also have the right to raise concerns with the UK's Information Commissioner's Office.</p>
-<p><small>Last updated: 20 November 2026. Review this notice against your actual suppliers, retention practices and business details before publishing.</small></p></div></details>
+<p><small>Last updated: 20 November 2026. Review this notice against your actual suppliers, retention practices and business details before publishing.</small></p></div></dialog>
   <footer><div><strong>FOX FIX & FINISH</strong> PROPERTY MAINTENANCE<br><small>Local. Reliable. Ready for the small jobs.</small></div><div class="footer-contacts"><a class="footer-phone" href="tel:+447301630675" aria-label="Call Fox Fix and Finish on 07301 630675">07301 630675</a><a class="footer-email" href="mailto:quotes@foxfixfinish.co.uk" aria-label="Email Fox Fix and Finish at quotes@foxfixfinish.co.uk">quotes@foxfixfinish.co.uk</a></div><small>© 2026 Fox Fix &amp; Finish · <a href="#privacy-notice" style="text-decoration:underline">Privacy</a> · All estimates subject to confirmation</small></footer>
   <div class="mobile-bar"><span><strong id="mobileCount">0 jobs</strong><small id="mobileTotal">Your basket is empty</small></span><button id="mobileBasket" class="button button-dark" type="button">View basket <span aria-hidden="true">↗</span></button></div>
   <div id="basketOverlay" class="overlay" hidden></div>
@@ -896,7 +918,24 @@ init();
 
 </script>
 <script>
-document.querySelectorAll('a[href="#privacy-notice"]').forEach(a=>a.addEventListener("click",()=>{document.querySelector("#privacy-notice").open=true}));
+/* Keep the privacy notice accessible exclusively from the footer and booking form links. */
+(() => {
+  const privacy = document.getElementById('privacy-notice');
+  const close = document.getElementById('closePrivacy');
+  document.querySelectorAll('a[href="#privacy-notice"]').forEach(link => {
+    link.addEventListener('click', event => {
+      event.preventDefault();
+      if (!privacy.open) privacy.showModal();
+    });
+  });
+  close.addEventListener('click', () => privacy.close());
+  privacy.addEventListener('click', event => {
+    if (event.target === privacy) {
+      const r = privacy.getBoundingClientRect();
+      if (event.clientX < r.left || event.clientX > r.right || event.clientY < r.top || event.clientY > r.bottom) privacy.close();
+    }
+  });
+})();
 </script>
 </body>
 </html>
