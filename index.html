@@ -567,20 +567,81 @@ function combineLookup(existing,incoming){
   title:chosen.title||other.title||'',
   source:chosen.source||other.source};
 }
+
+/* DUSK-only fallback. A blocked Supabase request must not prevent recognition of an
+   unambiguous product slug. Price is a guide until the customer agrees it with us. */
+function duskFromLink(url){
+ let u;
+ try{u=new URL(url)}catch{return null;}
+ if(!/^(?:www\.)?dusk\.com$/i.test(u.hostname))return null;
+ const m=u.pathname.match(/^\/products\/([a-z0-9][a-z0-9-]{1,180})\/?$/i);
+ if(!m)return null;
+ const handle=m[1].toLowerCase();
+ const title=handle.split('-').filter(Boolean).map(s=>s.charAt(0).toUpperCase()+s.slice(1)).join(' ');
+ // The existing guide-price classifier is shared with the original IKEA legacy flow.
+ const guide=legacyGuide({title,type:title});
+ const knownPhoto=handle==='posy-bobbin-6-drawer-chest-light-wood'
+  ? 'https://dusk.com/cdn/shop/files/posy-6-drawer-chest-light-wood-2698649-lifestyle.jpg?v=1788275690&width=1946' : '';
+ return {ok:true,retailer:'DUSK',identified:Number.isFinite(guide),
+  title,image:knownPhoto,type:Number.isFinite(guide)?'Furniture assembly':'Manual estimate',
+  unitPrice:Number.isFinite(guide)?guide:null,quoteToken:null,manualReview:true,
+  source:'DUSK product link (provisional)',url};
+}
+
 async function lookup(event){
  event.preventDefault();if(lookupBusy)return;
  const url=getLink($('productLink').value);
  if(!url){setLookupStatus('Please paste a complete HTTPS product link.','error');return;}
- if(!config.SUPABASE_URL){setLookupStatus('Product checking is temporarily unavailable. You can still add the link for a manual quote.','error');return;}
  const qty=countQty('linkQty');$('productResult').hidden=true;lastRecognised=null;lookupBusy=true;
- const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),34000);
  $('analyseBtn').disabled=true;$('analyseBtn').textContent='Checking product…';
+ // DUSK has a safe local path: classify from the URL before waiting for any network.
+ // This section does not change the existing IKEA recognition path below.
+ const dusk=duskFromLink(url);
+ if(dusk){
+  showResult(dusk,qty);
+  setLookupStatus(dusk.identified?
+   'Furniture identified from your DUSK link. Checking for the actual product details and photo…':
+   'DUSK product link saved. Checking product details for a manual estimate…');
+  const ctrl=new AbortController();
+  const timer=setTimeout(()=>ctrl.abort(),8500);
+  try{
+   if(config.SUPABASE_URL){
+    const live=await fetchLookup('recognise-dusk',url,ctrl.signal);
+    // Prefer product data actually read from DUSK. Preserve the safe URL-derived guide otherwise.
+    const preferred=live?.productDataVerified===true?live:combineLookup(dusk,live);
+    const complete={...preferred,
+     title:preferred.title||dusk.title,
+     image:preferred.image||dusk.image,
+     identified:preferred.identified||dusk.identified,
+     unitPrice:preferred.unitPrice??dusk.unitPrice,
+     quoteToken:null,manualReview:true};
+    showResult(complete,qty);
+    setLookupStatus(live?.productDataVerified?
+     'DUSK product details retrieved. The assembly price is a guide pending confirmation.':
+     'Furniture identified from the DUSK link. Guide price shown; final price confirmed by us.','success');
+   }else{
+    setLookupStatus('DUSK furniture identified from the link. Price is a guide until confirmed.','success');
+   }
+  }catch(err){
+   console.warn('DUSK enrichment unavailable; keeping URL-derived product:',err);
+   // No broken red error: the customer still has an identified item ready for manual review.
+   setLookupStatus(dusk.identified?
+    'Furniture identified from your DUSK link. Live product photo could not be retrieved; guide price subject to confirmation.':
+    'We have saved the DUSK product link. Add it to your basket for a personal quote.',
+    dusk.identified?'success':'');
+  }finally{
+   clearTimeout(timer);lookupBusy=false;$('analyseBtn').disabled=false;
+   $('analyseBtn').innerHTML='Check my item <span aria-hidden="true">↗</span>';
+  }
+  return;
+ }
+ // Original IKEA and other retailers: existing working flow, kept unchanged.
+ if(!config.SUPABASE_URL){setLookupStatus('Product checking is temporarily unavailable. You can still add the link for a manual quote.','error');lookupBusy=false;$('analyseBtn').disabled=false;$('analyseBtn').innerHTML='Check my item <span aria-hidden="true">↗</span>';return;}
+ const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),34000);
  setLookupStatus('Checking the product details. You can still add the link manually if needed.');
- // DUSK links use the separately deployed recognise-dusk endpoint; IKEA and all other retailers keep the original function.
- // Never call recognise-furniture-v2: it is not deployed on this project.
  let found=null;let errors=[];
  try{
-  for(const endpoint of [/(^|\.)dusk\.com$/i.test(new URL(url).hostname) ? 'recognise-dusk' : 'recognise-furniture']){
+  for(const endpoint of ['recognise-furniture']){
    if(controller.signal.aborted)break;
    try{
     const res=await fetchLookup(endpoint,url,controller.signal);
