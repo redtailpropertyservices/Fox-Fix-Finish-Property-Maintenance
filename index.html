@@ -576,11 +576,11 @@ async function lookup(event){
  const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),34000);
  $('analyseBtn').disabled=true;$('analyseBtn').textContent='Checking product…';
  setLookupStatus('Checking the product details. You can still add the link manually if needed.');
- // Use the EXISTING deployed Supabase Edge Function for every product link.
- // Do not call recognise-furniture-v2: it is not deployed on this project.
+ // DUSK links use the separately deployed recognise-dusk endpoint; IKEA and all other retailers keep the original function.
+ // Never call recognise-furniture-v2: it is not deployed on this project.
  let found=null;let errors=[];
  try{
-  for(const endpoint of ['recognise-furniture']){
+  for(const endpoint of [/(^|\.)dusk\.com$/i.test(new URL(url).hostname) ? 'recognise-dusk' : 'recognise-furniture']){
    if(controller.signal.aborted)break;
    try{
     const res=await fetchLookup(endpoint,url,controller.signal);
