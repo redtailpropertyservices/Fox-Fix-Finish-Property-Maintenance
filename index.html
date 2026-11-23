@@ -306,6 +306,10 @@ html.holiday-live .hero::before{
  .mobile-action-row .button-whatsapp{gap:4px}
 }
 
+/* Keep the manual-quote action out of sight until an actual lookup failure. */
+.manual-fallback[hidden]{display:none!important}
+/* A found item has one clear next step. */
+.product-result .result-buttons .button{min-height:44px}
 </style>
 
 </head>
@@ -362,7 +366,7 @@ html.holiday-live .hero::before{
           <p class="christmas-terms">🎁 Christmas savings are reflected in guide prices where we can identify an item. Unknown items are quoted personally, with any eligible Christmas discount confirmed by us.</p>
           <div id="lookupStatus" class="lookup-status" role="status" aria-live="polite"></div>
           <div id="productResult" class="product-result" hidden></div>
-          <div class="manual-fallback"><div><strong>Item not showing up?</strong><small>No problem. You can still send us the exact link and we’ll check it personally.</small></div><button id="manualLinkBtn" class="button button-quiet" type="button">Add link for manual quote <span aria-hidden="true">+</span></button></div>
+          <div class="manual-fallback" id="manualFallback" hidden><div><strong>Item not recognised?</strong><small>No problem — add the link and we’ll check the product ourselves.</small></div><button id="manualLinkBtn" class="button button-quiet" type="button">Add link for manual quote <span aria-hidden="true">+</span></button></div>
         </div>
       </section>
 
@@ -479,15 +483,36 @@ function totals(){
  return {subtotal,discount,discountedSubtotal,unknown,callout,total:roundCash(discountedSubtotal+callout),count:basket.reduce((n,x)=>n+x.qty,0)};
 }
 function initSelect(id,group){const el=$(id);for(const [key,[name,price,g]] of Object.entries(CATALOGUE)){if(g!==group)continue;const op=document.createElement('option');op.value=key;op.textContent=CHRISTMAS.active?`${name} — ${money(salePrice(price))} (was ${money(price)})`:`${name} — ${money(price)}`;el.append(op);}}
-function add(item){
- if(basket.length>=30){alert('Please contact us directly for a basket this large.');return;}
- basket.push({...item,uid:(globalThis.crypto?.randomUUID?.() || ('item-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2)))});store();renderBasket();openBasket();
+function add(item,openDrawer=true){
+ if(basket.length>=30){alert('Please contact us directly for a basket this large.');return false;}
+ basket.push({...item,uid:(globalThis.crypto?.randomUUID?.() || ('item-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2)))});store();renderBasket();
+ if(openDrawer)openBasket();
+ return true;
 }
 function addCatalogue(selectId,qtyId){const id=$(selectId).value;if(!CATALOGUE[id]){alert('Choose a service to add.');$(selectId).focus();return;}const [title,unitPrice]=CATALOGUE[id];add({kind:'catalogue',id,title,qty:countQty(qtyId),unitPrice,manualReview:false});$(selectId).value='';$(qtyId).value='1';}
 function setLookupStatus(msg,kind=''){const el=$('lookupStatus');el.textContent=msg;el.className='lookup-status '+kind;}
+function setManualFallback(show){$('manualFallback').hidden=!show;}
+function clearLinkAfterAdd(){
+ $('productLink').value='';$('linkQty').value='1';$('linkDetails').value='';
+ lastRecognised=null;$('productResult').hidden=true;$('productResult').innerHTML='';
+ setManualFallback(false);
+ setLookupStatus('✓ Added to your basket. Paste another product link to add your next item.','success');
+}
+/* Prevent the last recognised item being added after a customer edits their link. */
+function invalidateLinkResult(){
+ lastRecognised=null;$('productResult').hidden=true;$('productResult').innerHTML='';
+ setManualFallback(false);setLookupStatus('');
+}
+function showManualLookupFailure(message){
+ lastRecognised=null;$('productResult').hidden=true;$('productResult').innerHTML='';
+ setManualFallback(true);setLookupStatus(message,'error');
+}
 function productImage(image,cls='result-image'){
- const u=getLink(image);
- return u?`<img class="${cls}" src="${escapeHTML(u)}" alt="Product photograph from the retailer" referrerpolicy="no-referrer" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'${cls} result-placeholder',textContent:'📦'}))">`:`<div class="${cls} result-placeholder" aria-hidden="true">📦</div>`;
+ // Supports the original single image (IKEA) and a list of exact retailer images.
+ const choices=(Array.isArray(image)?image:[image]).map(getLink).filter(Boolean).slice(0,8);
+ const fallback=`<div class="${cls} result-placeholder" aria-hidden="true">📦</div>`;
+ if(!choices.length)return fallback;
+ return `<img class="${cls}" src="${escapeHTML(choices[0])}" data-photo-options="${escapeHTML(JSON.stringify(choices.slice(1)))}" alt="Product photograph from the retailer" referrerpolicy="no-referrer" loading="lazy" onerror="try{const a=JSON.parse(this.dataset.photoOptions||'[]');if(a.length){this.dataset.photoOptions=JSON.stringify(a.slice(1));this.src=a[0];}else{this.replaceWith(Object.assign(document.createElement('div'),{className:'${cls} result-placeholder',textContent:'📦'}));}}catch(e){this.replaceWith(Object.assign(document.createElement('div'),{className:'${cls} result-placeholder',textContent:'📦'}));}">`;
 }
 function legacyGuide(data){
  // Old IKEA function may still use historical prices. Never pass those as verified prices.
@@ -527,13 +552,13 @@ function asLookupResult(raw,endpoint,url){
   provisionalOnly:legacy||!raw?.quoteToken};
 }
 function showResult(data,qty){
- const el=$('productResult');el.hidden=false;
+ const el=$('productResult');el.hidden=false;setManualFallback(false);
  const hasPrice=!!data.identified&&data.unitPrice!==null&&Number.isFinite(Number(data.unitPrice));
  const signed=hasPrice&&typeof data.quoteToken==='string'&&data.quoteToken.length>10;
  const price=hasPrice?Number(data.unitPrice):null;
  const review=!signed||!!data.manualReview;
  const product={kind:signed?'product':'manual',url:data.url||getLink($('productLink').value),
-  title:data.title||'Furniture item — manual review',image:data.image||'',qty,
+  title:data.title||'Furniture item — manual review',image:data.image||'',imageOptions:[...new Set([data.image,...(Array.isArray(data.images)?data.images:[])].filter(Boolean))],qty,
   type:data.type||'Assembly estimate',unitPrice:signed?price:null,guidePrice:!signed?price:null,
   manualReview:review,quoteToken:signed?data.quoteToken:null,details:$('linkDetails').value.trim()};
  lastRecognised=product;
@@ -541,8 +566,12 @@ function showResult(data,qty){
    price!==null?'Guide only. We will confirm this item’s price before booking.':'Price to be confirmed manually.';
  const priceText=signed?money(salePrice(price*qty)):(price!==null?'Guide '+money(salePrice(price*qty)):'Manual quote');
  const qtyText=price!==null?`${qty} × ${money(salePrice(price))}${CHRISTMAS.active?' (Christmas offer)':''}`:'';
- el.innerHTML=`${productImage(product.image)}<div class="product-result-main"><div class="product-result-title">${escapeHTML(product.title)}</div><div class="product-result-sub">${escapeHTML(product.type)} · ${escapeHTML(data.source||'Product link')}</div><div class="result-price">${CHRISTMAS.active&&price!==null?`<del class="old-price">${money(price*qty)}</del>`:''}${escapeHTML(priceText)} <small>${escapeHTML(qtyText)}</small></div><div class="product-result-sub">${escapeHTML(note)}</div><div class="result-buttons"><button type="button" id="addRecognised" class="button button-orange">${signed?'Add estimate to basket':'Add for manual review'} +</button></div></div>`;
- $('addRecognised').addEventListener('click',()=>{if(lastRecognised)add({...lastRecognised,details:$('linkDetails').value.trim(),qty:countQty('linkQty')});});
+ el.innerHTML=`${productImage(product.imageOptions.length?product.imageOptions:product.image)}<div class="product-result-main"><div class="product-result-title">${escapeHTML(product.title)}</div><div class="product-result-sub">${escapeHTML(product.type)} · ${escapeHTML(data.source||'Product link')}</div><div class="result-price">${CHRISTMAS.active&&price!==null?`<del class="old-price">${money(price*qty)}</del>`:''}${escapeHTML(priceText)} <small>${escapeHTML(qtyText)}</small></div><div class="product-result-sub">${escapeHTML(note)}</div><div class="result-buttons"><button type="button" id="addRecognised" class="button button-orange">Add to basket +</button></div></div>`;
+ $('addRecognised').addEventListener('click',()=>{
+  if(!lastRecognised||getLink($('productLink').value)!==lastRecognised.url)return;
+  const entry={...lastRecognised,details:$('linkDetails').value.trim(),qty:countQty('linkQty')};
+  if(add(entry,false))clearLinkAfterAdd();
+ });
 }
 async function fetchLookup(endpoint,url,signal){
  const r=await fetch(config.SUPABASE_URL+'/functions/v1/'+endpoint,{method:'POST',
@@ -552,6 +581,49 @@ async function fetchLookup(endpoint,url,signal){
  if(!r.ok)throw Error(endpoint+': '+(result.error||'HTTP '+r.status));
  if(!result||typeof result!=='object')throw Error('Invalid lookup result');
  return asLookupResult(result,endpoint,url);
+}
+/* The independent image service never calculates prices or changes identification. */
+async function fetchProductPhoto(url,signal){
+ const response=await fetch(config.SUPABASE_URL+'/functions/v1/product-photo',{
+  method:'POST',
+  headers:{'Content-Type':'application/json',...(config.SUPABASE_PUBLISHABLE_KEY?{apikey:config.SUPABASE_PUBLISHABLE_KEY}:{})},
+  body:JSON.stringify({url}),signal
+ });
+ const payload=await response.json().catch(()=>null);
+ if(!response.ok||!payload?.ok)return null;
+ return payload;
+}
+/* Only replace the photo; never reprice a result or remove its Add to Basket button. */
+function displayPhotoOnly(url,photos){
+ const candidates=[...new Set(photos.map(getLink).filter(Boolean))].slice(0,6);
+ if(!candidates.length)return;
+ // A customer might already have added the item before the photograph arrives.
+ // Update that basket item as well, without changing whichever product is now being edited.
+ let changed=false;
+ for(const item of basket){
+  if(item.url===url&&!item.image){item.image=candidates[0];item.imageOptions=candidates;changed=true;}
+ }
+ if(changed){store();renderBasket();}
+ if(lastRecognised?.url!==url||getLink($('productLink').value)!==url)return;
+ lastRecognised.image=candidates[0];lastRecognised.imageOptions=candidates;
+ const result=$('productResult');
+ const current=result.querySelector('.result-image');
+ if(current){
+  const wrap=document.createElement('div');wrap.innerHTML=productImage(candidates);
+  if(wrap.firstElementChild)current.replaceWith(wrap.firstElementChild);
+ }
+}
+async function enrichProductImage(url){
+ let host='';try{host=new URL(url).hostname.toLowerCase();}catch{return;}
+ // IKEA keeps its original photo source and is never sent to this function.
+ if(!['dusk.com','www.dusk.com','argos.co.uk','www.argos.co.uk','wayfair.co.uk','www.wayfair.co.uk','amazon.co.uk','www.amazon.co.uk'].includes(host))return;
+ try{
+  const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),14500);
+  try{
+   const photo=await fetchProductPhoto(url,controller.signal);
+   if(photo?.image)displayPhotoOnly(url,[photo.image,...(Array.isArray(photo.images)?photo.images:[])]);
+  }finally{clearTimeout(timeout);}
+ }catch(err){console.info('Product photo unavailable; keeping estimate unchanged.');}
 }
 function combineLookup(existing,incoming){
  // The v2 signed title and price must stay together; the original endpoint may
@@ -564,6 +636,7 @@ function combineLookup(existing,incoming){
    incoming.identified&&!existing.identified?incoming:existing;
  const other=chosen===existing?incoming:existing;
  return {...chosen,image:chosen.image||other.image||'',
+  images:[...new Set([chosen.image,other.image,...(chosen.images||[]),...(other.images||[])].filter(Boolean))],
   title:chosen.title||other.title||'',
   source:chosen.source||other.source};
 }
@@ -592,53 +665,27 @@ async function lookup(event){
  event.preventDefault();if(lookupBusy)return;
  const url=getLink($('productLink').value);
  if(!url){setLookupStatus('Please paste a complete HTTPS product link.','error');return;}
- const qty=countQty('linkQty');$('productResult').hidden=true;lastRecognised=null;lookupBusy=true;
+ const qty=countQty('linkQty');$('productResult').hidden=true;lastRecognised=null;setManualFallback(false);lookupBusy=true;
  $('analyseBtn').disabled=true;$('analyseBtn').textContent='Checking product…';
- // DUSK has a safe local path: classify from the URL before waiting for any network.
- // This section does not change the existing IKEA recognition path below.
+ // DUSK can be recognised from its URL immediately, without holding the form up for a photo.
+ // The separate image function runs in the background and never blocks another item.
  const dusk=duskFromLink(url);
  if(dusk){
-  showResult(dusk,qty);
-  setLookupStatus(dusk.identified?
-   'Furniture identified from your DUSK link. Checking for the actual product details and photo…':
-   'DUSK product link saved. Checking product details for a manual estimate…');
-  const ctrl=new AbortController();
-  const timer=setTimeout(()=>ctrl.abort(),8500);
-  try{
-   if(config.SUPABASE_URL){
-    const live=await fetchLookup('recognise-dusk',url,ctrl.signal);
-    // Prefer product data actually read from DUSK. Preserve the safe URL-derived guide otherwise.
-    const preferred=live?.productDataVerified===true?live:combineLookup(dusk,live);
-    const complete={...preferred,
-     title:preferred.title||dusk.title,
-     image:preferred.image||dusk.image,
-     identified:preferred.identified||dusk.identified,
-     unitPrice:preferred.unitPrice??dusk.unitPrice,
-     quoteToken:null,manualReview:true};
-    showResult(complete,qty);
-    setLookupStatus(live?.productDataVerified?
-     'DUSK product details retrieved. The assembly price is a guide pending confirmation.':
-     'Furniture identified from the DUSK link. Guide price shown; final price confirmed by us.','success');
-   }else{
-    setLookupStatus('DUSK furniture identified from the link. Price is a guide until confirmed.','success');
-   }
-  }catch(err){
-   console.warn('DUSK enrichment unavailable; keeping URL-derived product:',err);
-   // No broken red error: the customer still has an identified item ready for manual review.
-   setLookupStatus(dusk.identified?
-    'Furniture identified from your DUSK link. Live product photo could not be retrieved; guide price subject to confirmation.':
-    'We have saved the DUSK product link. Add it to your basket for a personal quote.',
-    dusk.identified?'success':'');
-  }finally{
-   clearTimeout(timer);lookupBusy=false;$('analyseBtn').disabled=false;
-   $('analyseBtn').innerHTML='Check my item <span aria-hidden="true">↗</span>';
+  if(dusk.identified){
+   showResult(dusk,qty);
+   setLookupStatus('Furniture identified. Add it to your basket; the guide price will be confirmed.','success');
+   if(config.SUPABASE_URL)void enrichProductImage(url);
+  }else{
+   showManualLookupFailure('We couldn’t identify this DUSK item. Add its link for a manual quote.');
   }
+  lookupBusy=false;$('analyseBtn').disabled=false;
+  $('analyseBtn').innerHTML='Check my item <span aria-hidden="true">↗</span>';
   return;
  }
  // Original IKEA and other retailers: existing working flow, kept unchanged.
- if(!config.SUPABASE_URL){setLookupStatus('Product checking is temporarily unavailable. You can still add the link for a manual quote.','error');lookupBusy=false;$('analyseBtn').disabled=false;$('analyseBtn').innerHTML='Check my item <span aria-hidden="true">↗</span>';return;}
+ if(!config.SUPABASE_URL){showManualLookupFailure('Product checking is temporarily unavailable. You can still add the link for a manual quote.');lookupBusy=false;$('analyseBtn').disabled=false;$('analyseBtn').innerHTML='Check my item <span aria-hidden="true">↗</span>';return;}
  const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),34000);
- setLookupStatus('Checking the product details. You can still add the link manually if needed.');
+ setLookupStatus('Checking your product link…');
  let found=null;let errors=[];
  try{
   for(const endpoint of ['recognise-furniture']){
@@ -647,7 +694,8 @@ async function lookup(event){
     const res=await fetchLookup(endpoint,url,controller.signal);
     found=combineLookup(found,res);
     if(found&&(found.identified||found.image||found.title)){
-     showResult(found,qty);
+     if(getLink($('productLink').value)!==url)return;
+     if(found.identified)showResult(found,qty);
      if(found.quoteToken&&found.identified&&found.image){
       setLookupStatus('Product identified. Check the assembly estimate and add it to your basket.','success');
       break;
@@ -656,22 +704,25 @@ async function lookup(event){
     }
    }catch(e){errors.push(e.message||String(e));console.warn('Product lookup '+endpoint+' unavailable:',e.message||e);}
   }
-  if(found){showResult(found,qty);
-   setLookupStatus(found.identified?(found.quoteToken?'Product identified. Review your estimate below.':'Product found. This is a guide price; we’ll confirm it manually before booking.'):
-    'We couldn’t confidently price this product. You can still add it for manual review.',found.identified?'success':'');
+  if(getLink($('productLink').value)!==url)return;
+  if(found?.identified){
+   showResult(found,qty);
+   setLookupStatus(found.quoteToken?'Product identified. Add it to your basket.':'Product identified. Add it to your basket; we’ll confirm the guide price before booking.','success');
   }else{
-   showResult({identified:false,url,title:'Furniture item — manual review',type:'Manual estimate',image:''},qty);
-   setLookupStatus('We couldn’t read this product automatically. You can still add its link to your basket for a manual quote.','error');
+   showManualLookupFailure('We couldn’t identify this product automatically. Add its link for a manual quote.');
   }
+  // Non-blocking photo attempt for Argos/Wayfair/Amazon only; IKEA remains untouched.
+  if(lastRecognised&&!lastRecognised.image)void enrichProductImage(url);
  }finally{
   clearTimeout(timeout);lookupBusy=false;$('analyseBtn').disabled=false;
   $('analyseBtn').innerHTML='Check my item <span aria-hidden="true">↗</span>';
  }
 }
-function manualLink(){const url=getLink($('productLink').value);if(!url){setLookupStatus('Paste a valid HTTPS product link before adding it to your basket.','error');$('productLink').focus();return;}
- const title=lastRecognised?.url===url&&lastRecognised?.title?lastRecognised.title:'Furniture item — to be checked';
- add({kind:'manual',title,url,qty:countQty('linkQty'),details:$('linkDetails').value.trim(),unitPrice:null,manualReview:true,image:lastRecognised?.image||''});
- setLookupStatus('Link added for manual review. You can add more jobs or send your booking request.','success');
+function manualLink(){
+ const url=getLink($('productLink').value);
+ if(!url){setLookupStatus('Paste a valid HTTPS product link before adding it to your basket.','error');$('productLink').focus();return;}
+ const title='Furniture item — to be checked';
+ if(add({kind:'manual',title,url,qty:countQty('linkQty'),details:$('linkDetails').value.trim(),unitPrice:null,manualReview:true,image:''},false))clearLinkAfterAdd();
 }
 function openBasket(){
  $('basketOverlay').hidden=false;$('basketDrawer').classList.add('open');$('basketDrawer').setAttribute('aria-hidden','false');document.body.style.overflow='hidden';
@@ -693,7 +744,7 @@ function renderBasket(){
  if(!basket.length){list.innerHTML='<div class="basket-empty"><strong>Your basket is empty</strong>Add a product link or choose a job to get started.</div>';}else{
   for(const x of basket){
    const row=document.createElement('div');row.className='basket-row';
-   const img=x.image?productImage(x.image,'basket-thumbnail'):'<div class="basket-thumbnail placeholder" aria-hidden="true">📦</div>';
+   const img=x.imageOptions?.length?productImage(x.imageOptions,'basket-thumbnail'):(x.image?productImage(x.image,'basket-thumbnail'):'<div class="basket-thumbnail placeholder" aria-hidden="true">📦</div>');
    row.innerHTML=img+`<div class="basket-body"><strong>${escapeHTML(x.title)}</strong><small>${x.kind==='manual'||x.manualReview?'Manual confirmation required':'Assembly / mounting estimate'}${x.url?` · <a href="${escapeHTML(x.url)}" target="_blank" rel="noopener noreferrer">Product link ↗</a>`:''}</small><div class="basket-price">${basketItemPriceHTML(x)}</div><div class="basket-controls"><button aria-label="Decrease quantity" data-action="decrease">−</button><span>${x.qty}</span><button aria-label="Increase quantity" data-action="increase">+</button><button class="remove-item" data-action="remove">Remove</button></div></div>`;
    row.querySelectorAll('[data-action]').forEach(btn=>btn.addEventListener('click',()=>{
     const action=btn.dataset.action;
@@ -764,6 +815,7 @@ function initTurnstile(){if(!config.TURNSTILE_SITE_KEY)return;const el=$('turnst
 function init(){
  initSelect('assemblySelect','assembly');initSelect('mountSelect','mounting');
  $('lookupForm').addEventListener('submit',lookup);$('manualLinkBtn').addEventListener('click',manualLink);
+ $('productLink').addEventListener('input',invalidateLinkResult);
  $('assemblyAdd').addEventListener('click',()=>addCatalogue('assemblySelect','assemblyQty'));
  $('mountAdd').addEventListener('click',()=>addCatalogue('mountSelect','mountQty'));
  $('otherAdd').addEventListener('click',()=>{const s=$('otherDetails').value.trim();if(s.length<8){alert('Please describe the job in a little more detail.');$('otherDetails').focus();return;}add({kind:'manual',title:'Other handyman work',details:s,qty:1,unitPrice:null,manualReview:true});$('otherDetails').value='';});
